@@ -77,6 +77,10 @@ export default function createLogger(options = {}) {
 
         const logger = (format, formatLine = format) => (...args) => {
             const message = args.map(arg => {
+                if (arg instanceof Error) {
+                    return JSON.stringify(arg, Object.getOwnPropertyNames(arg));
+                }
+
                 if (arg instanceof Object) {
                     return JSON.stringify(arg);
                 }
@@ -101,6 +105,7 @@ export default function createLogger(options = {}) {
 
         context.log = logger(colorize('info'), string => string);
         context.info = logger(colorize('info'));
+        context.error = logger(colorize(6));
 
         await next();
 
