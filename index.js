@@ -99,6 +99,7 @@ export default function createLogger(options = {}) {
             }
         };
 
+        context.log = logger(colorize('info'), string => string);
         context.info = logger(colorize('info'));
 
         await next();
