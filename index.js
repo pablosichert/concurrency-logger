@@ -75,7 +75,14 @@ export default function createLogger(options = {}) {
         console.log(`⟶   ${method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
 
         context.info = (...args) => {
-            const message = args.join(' ');
+            const message = args.map(arg => {
+                if (arg instanceof Object) {
+                    return JSON.stringify(arg);
+                }
+
+                return arg;
+            }).join(' ');
+
             const info = colorize('info');
             const now = Date.now();
             const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : SPACER);
