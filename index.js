@@ -74,6 +74,17 @@ export default function createLogger(options = {}) {
         // eslint-disable-next-line no-console
         console.log(`⟶   ${method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
 
+        context.info = (...args) => {
+            const message = args.join(' ');
+            const info = colorize('info');
+            const now = Date.now();
+            const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : SPACER);
+            _slots[slot] = colorize('info')('│');
+
+            // eslint-disable-next-line no-console
+            console.log(`${new Array(15).join(' ')} ${_slots.join(SPACER)} ${info(message)}`);
+        };
+
         await next();
 
         const end = Date.now();
