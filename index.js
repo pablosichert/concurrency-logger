@@ -2,8 +2,12 @@ import colors from 'ansi-256-colors';
 
 const SPACER = colors.fg.getRgb(1, 1, 1) + '┈' + colors.reset;
 
-export default function createLogger() {
-    const slots = new Array(3).fill(null);
+export default function createLogger(options) {
+    const {
+        minSlots = 3
+    } = options;
+
+    const slots = new Array(minSlots).fill(null);
 
     const getShade = function (start, now) {
         const time = now - start;
