@@ -3,18 +3,32 @@ import colors from 'ansi-256-colors';
 const SPACER = colors.fg.getRgb(1, 1, 1) + '┈' + colors.reset;
 const GET_LEVEL = responseTime => Math.floor(responseTime / 50) - 1;
 
-function colorize(level = 0, character) {
-    if (level <= 0) {
-        return character;
+function colorize(color = 0) {
+    if (typeof color === 'number') {
+        if (color <= 0) {
+            return character => character;
+        }
+
+        let green = 6 - color;
+
+        if (green < 0) {
+            green = 0;
+        }
+
+        return character => colors.fg.getRgb(5, green, 0) + character + colors.reset;
+    } else {
+        let format;
+
+        if (color === 'info') {
+            format = colors.fg.standard[4];
+        }
+
+        if (format) {
+            return character => format + character + colors.reset;
+        } else {
+            return character => character;
+        }
     }
-
-    let green = 6 - level;
-
-    if (green < 0) {
-        green = 0;
-    }
-
-    return colors.fg.getRgb(5, green, 0) + character + colors.reset;
 }
 
 export default function createLogger(options = {}) {
@@ -27,7 +41,7 @@ export default function createLogger(options = {}) {
     const colorizer = responseTime => {
         const level = getLevel(responseTime);
 
-        return colorize.bind(null, level);
+        return colorize(level);
     };
 
     return async function logger(context, next) {
@@ -74,11 +88,25 @@ export default function createLogger(options = {}) {
 
         time = timeColorize(time);
 
+        let status = context.status;
+
+        if (status >= 100 && status < 200) {
+            status = colorize('info')(status);
+        } else if (status < 300) {
+            // Success
+        } else if (status >= 300 && status < 400) {
+            status = colorize(1)(status);
+        } else if (status < 500) {
+            status = colorize(4)(status);
+        } else {
+            status = colorize(6)(status);
+        }
+
         const closeSlot = slots.map(slot => slot ? colorizer(end - slot)('│') : SPACER);
         closeSlot[slot] = timeColorize('┴');
         slots[slot] = null;
 
         // eslint-disable-next-line no-console
-        console.log(`${context.status} ${method} ${time} ${closeSlot.join(SPACER)} ${context.originalUrl}`);
+        console.log(`${status} ${method} ${time} ${closeSlot.join(SPACER)} ${context.originalUrl}`);
     };
 }
