@@ -1,0 +1,38 @@
+{
+  "name": "concurrency-logger",
+  "version": "1.0.0",
+  "description": "Log HTTP requests/responses separately and visualize their concurrency",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PabloSichert/concurrency-logger.git"
+  },
+  "keywords": [
+    "http",
+    "request",
+    "log",
+    "logger",
+    "concurrent",
+    "concurrency",
+    "koa",
+    "middleware"
+  ],
+  "author": "Pablo Sichert <mail@pablosichert.de>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PabloSichert/concurrency-logger/issues"
+  },
+  "homepage": "https://github.com/PabloSichert/concurrency-logger#readme",
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.16.0",
+    "eslint": "^3.7.1"
+  },
+  "dependencies": {
+    "ansi-256-colors": "^1.1.0"
+  }
+}
