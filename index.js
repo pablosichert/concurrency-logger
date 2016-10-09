@@ -75,7 +75,7 @@ export default function createLogger(options = {}) {
         // eslint-disable-next-line no-console
         console.log(`⟶   ${method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
 
-        context.info = (...args) => {
+        const logger = (format, formatLine = format) => (...args) => {
             const message = args.map(arg => {
                 if (arg instanceof Object) {
                     return JSON.stringify(arg);
@@ -87,18 +87,19 @@ export default function createLogger(options = {}) {
             const metaLength = 14;
             const messageWidth = width - metaLength - slots.length * 2 - 1;
 
-            const info = colorize('info');
             const now = Date.now();
             const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : SPACER);
-            _slots[slot] = colorize('info')('│');
+            _slots[slot] = format('│');
 
             for (let i = 0; i < message.length; i = i + messageWidth) {
                 const line = message.substr(i, messageWidth);
 
                 // eslint-disable-next-line no-console
-                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(SPACER)} ${info(line)}`);
+                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(SPACER)} ${formatLine(line)}`);
             }
         };
+
+        context.info = logger(colorize('info'));
 
         await next();
 
