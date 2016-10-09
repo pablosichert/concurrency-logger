@@ -10,7 +10,7 @@ export default function createLogger(options = {}) {
     } = options;
 
     const slots = new Array(minSlots).fill(null);
-    const colorize = responseTime => character => {
+    const colorizer = responseTime => character => {
         const level = getLevel(responseTime);
 
         if (level <= 0) {
@@ -42,7 +42,7 @@ export default function createLogger(options = {}) {
             slot = slots.length - 1;
         }
 
-        const openSlot = slots.map(slot => slot ? colorize(start - slot)('│') : SPACER);
+        const openSlot = slots.map(slot => slot ? colorizer(start - slot)('│') : SPACER);
         openSlot[slot] = '┬';
         slots[slot] = start;
 
@@ -59,8 +59,8 @@ export default function createLogger(options = {}) {
             time = new Array(6 - time.length).join(SPACER) + time;
         }
 
-        const closeSlot = slots.map(slot => slot ? colorize(end - slot)('│') : SPACER);
-        closeSlot[slot] = colorize(end - slots[slot])('┴');
+        const closeSlot = slots.map(slot => slot ? colorizer(end - slot)('│') : SPACER);
+        closeSlot[slot] = colorizer(end - slots[slot])('┴');
         slots[slot] = null;
 
         // eslint-disable-next-line no-console
