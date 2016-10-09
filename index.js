@@ -103,9 +103,17 @@ export default function createLogger(options = {}) {
             }
         };
 
-        context.log = logger(colorize('info'), string => string);
-        context.info = logger(colorize('info'));
-        context.error = logger(colorize(6));
+        const log = logger(colorize('info'), string => string);
+        const info = logger(colorize('info'));
+        const error = logger(colorize(6));
+
+        context.log = log;
+
+        context.logger = {
+            log,
+            info,
+            error
+        };
 
         await next();
 
