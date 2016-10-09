@@ -52,15 +52,19 @@ export default function createLogger(options = {}) {
         await next();
 
         const end = Date.now();
+        const responseTime = end - start;
+        const colorize = colorizer(responseTime);
 
-        let time = `${end - start}ms`;
+        let time = `${responseTime}ms`;
 
         if (time.length < 5) {
             time = new Array(6 - time.length).join(SPACER) + time;
         }
 
+        time = colorize(time);
+
         const closeSlot = slots.map(slot => slot ? colorizer(end - slot)('│') : SPACER);
-        closeSlot[slot] = colorizer(end - slots[slot])('┴');
+        closeSlot[slot] = colorize('┴');
         slots[slot] = null;
 
         // eslint-disable-next-line no-console
