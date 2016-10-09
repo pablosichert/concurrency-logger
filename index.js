@@ -34,7 +34,8 @@ function colorize(color = 0) {
 export default function createLogger(options = {}) {
     const {
         minSlots = 3,
-        getLevel = GET_LEVEL
+        getLevel = GET_LEVEL,
+        width = 80
     } = options;
 
     const slots = new Array(minSlots).fill(null);
@@ -83,13 +84,20 @@ export default function createLogger(options = {}) {
                 return arg;
             }).join(' ');
 
+            const metaLength = 14;
+            const messageWidth = width - metaLength - slots.length * 2 - 1;
+
             const info = colorize('info');
             const now = Date.now();
             const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : SPACER);
             _slots[slot] = colorize('info')('│');
 
-            // eslint-disable-next-line no-console
-            console.log(`${new Array(15).join(' ')} ${_slots.join(SPACER)} ${info(message)}`);
+            for (let i = 0; i < message.length; i = i + messageWidth) {
+                const line = message.substr(i, messageWidth);
+
+                // eslint-disable-next-line no-console
+                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(SPACER)} ${info(line)}`);
+            }
         };
 
         await next();
