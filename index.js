@@ -47,7 +47,7 @@ export default function createLogger(options = {}) {
         slots[slot] = start;
 
         // eslint-disable-next-line no-console
-        console.log(`${new Array(4).join(SPACER)} ⇾ ${context.method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
+        console.log(`⟶   ${context.method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
 
         await next();
 
@@ -68,6 +68,6 @@ export default function createLogger(options = {}) {
         slots[slot] = null;
 
         // eslint-disable-next-line no-console
-        console.log(`${context.status} ⇽ ${context.method} ${time} ${closeSlot.join(SPACER)} ${context.originalUrl}`);
+        console.log(`${context.status} ${context.method} ${time} ${closeSlot.join(SPACER)} ${context.originalUrl}`);
     };
 }
