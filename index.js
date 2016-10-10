@@ -33,7 +33,7 @@ function colorize(color = 0) {
 
 export default function createLogger(options = {}) {
     const {
-        minSlots = 3,
+        minSlots = 1,
         getLevel = GET_LEVEL,
         width = 80
     } = options;
