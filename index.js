@@ -78,11 +78,13 @@ export default function createLogger(options = {}) {
         const logger = (format, formatLine = format) => (...args) => {
             const message = args.map(arg => {
                 if (arg instanceof Error) {
-                    return JSON.stringify(arg, Object.getOwnPropertyNames(arg));
+                    return JSON.stringify(arg, Object.getOwnPropertyNames(arg))
+                        .replace(/\\n/g, '\n')
+                    ;
                 }
 
                 if (arg instanceof Object) {
-                    return JSON.stringify(arg);
+                    return JSON.stringify(arg).replace(/\\n/g, '\n');
                 }
 
                 return arg;
@@ -96,7 +98,13 @@ export default function createLogger(options = {}) {
             _slots[slot] = format('│');
 
             for (let i = 0; i < message.length; i = i + messageWidth) {
-                const line = message.substr(i, messageWidth);
+                let line = message.substr(i, messageWidth);
+
+                const lineBreak = line.indexOf('\n');
+                if (lineBreak >= 0) {
+                    line = line.substr(0, lineBreak);
+                    i = i - messageWidth + lineBreak + 1;
+                }
 
                 // eslint-disable-next-line no-console
                 console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(' ')} ${formatLine(line)}`);
