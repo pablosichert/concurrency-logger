@@ -75,7 +75,15 @@ export default function createLogger(options = {}) {
         // eslint-disable-next-line no-console
         console.log(`⟶   ${method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
 
-        const logger = (format = string => string, formatLine = format) => (...args) => {
+        const logger = (format, formatLine) => (...args) => {
+            if (!formatLine) {
+                if (format) {
+                    formatLine = format;
+                } else {
+                    formatLine = string => string;
+                }
+            }
+
             const message = args.map(arg => {
                 if (arg instanceof Error) {
                     return JSON.stringify(arg, Object.getOwnPropertyNames(arg))
@@ -95,7 +103,7 @@ export default function createLogger(options = {}) {
 
             const now = Date.now();
             const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : ' ');
-            _slots[slot] = format('╎');
+            _slots[slot] = format ? format('╎') : _slots[slot].replace('│', '╎');
 
             for (let i = 0; i < message.length; i = i + messageWidth) {
                 let line = message.substr(i, messageWidth);
