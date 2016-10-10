@@ -92,14 +92,14 @@ export default function createLogger(options = {}) {
             const messageWidth = width - metaLength - slots.length * 2 - 1;
 
             const now = Date.now();
-            const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : SPACER);
+            const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : ' ');
             _slots[slot] = format('│');
 
             for (let i = 0; i < message.length; i = i + messageWidth) {
                 const line = message.substr(i, messageWidth);
 
                 // eslint-disable-next-line no-console
-                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(SPACER)} ${formatLine(line)}`);
+                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(' ')} ${formatLine(line)}`);
             }
         };
 
