@@ -131,7 +131,12 @@ export default function createLogger(options = {}) {
             error
         };
 
-        await next();
+        try {
+            await next();
+        } catch(error) {
+            context.status = 500;
+            context.logger.error(error);
+        }
 
         const end = Date.now();
         const responseTime = end - start;
