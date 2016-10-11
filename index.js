@@ -63,7 +63,7 @@ function colorize(color = 0) {
     }
 }
 
-function printToConsole(width, slots, slot, colorizer) {
+function printToConsole(maxLocaleTimeLength, width, slots, slot, colorizer) {
     return (format, formatLine) => {
         return (...args) => {
             if (!formatLine) {
@@ -86,10 +86,13 @@ function printToConsole(width, slots, slot, colorizer) {
                 return arg;
             }).join(' ');
 
-            const metaLength = 14;
-            const messageWidth = width - metaLength - slots.length * 2 - 1;
+            maxLocaleTimeLength = maxLocaleTimeLength();
 
-            const now = Date.now();
+            const messageWidth = (
+                width - 4 - maxLocaleTimeLength - 6 - slots.length * 2 - 1
+            );
+
+            const now = new Date;
 
             const _slots = slots.map(slot =>
                 slot ? colorizer(now - slot)('│') : ' '
@@ -108,9 +111,11 @@ function printToConsole(width, slots, slot, colorizer) {
                     i = i - messageWidth + lineBreak + 1;
                 }
 
+                const meta = chars(' ', 4 + maxLocaleTimeLength + 5);
+
                 // eslint-disable-next-line no-console
                 console.log(join`
-                    ${chars(' ', metaLength)}
+                    ${meta}
                     ${_slots.join(' ')}
                     ${formatLine(line)}
                 `);
@@ -184,7 +189,13 @@ export default function createLogger(options = {}) {
             ${context.originalUrl}
         `);
 
-        const printer = printToConsole(width, slots, slot, colorizer);
+        const printer = printToConsole(
+            () => maxLocaleTimeLength,
+            width,
+            slots,
+            slot,
+            colorizer
+        );
 
         const log = printer();
         log.info = printer(colorize('info'));
