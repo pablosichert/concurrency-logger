@@ -127,11 +127,14 @@ export default function createLogger(options = {}) {
     } = options;
 
     const slots = new Array(minSlots).fill(null);
+
     const colorizer = responseTime => {
         const level = getLevel(responseTime);
 
         return colorize(level);
     };
+
+    let maxLocaleTimeLength = (new Date).toLocaleTimeString().length;
 
     return async function logger(context, next) {
         const start = new Date;
@@ -163,7 +166,15 @@ export default function createLogger(options = {}) {
             method += chars(SPACER, 4 - method.length);
         }
 
-        const localeTime = start.toLocaleTimeString();
+        let localeTime = start.toLocaleTimeString();
+
+        if (localeTime.length > maxLocaleTimeLength) {
+            maxLocaleTimeLength = localeTime.length;
+        } else if (localeTime.length < maxLocaleTimeLength) {
+            localeTime += (
+                chars(SPACER, maxLocaleTimeLength - localeTime.length)
+            );
+        }
 
         // eslint-disable-next-line no-console
         console.log(join`
@@ -195,14 +206,12 @@ export default function createLogger(options = {}) {
         let time = `${responseTime}ms`;
 
         const timeLength = time.length;
-        const localeTimeLength = localeTime.length;
 
         time = timeColorize(time);
 
-        if (timeLength < localeTimeLength) {
-            time = chars(SPACER, localeTimeLength - timeLength) + time;
+        if (timeLength < maxLocaleTimeLength) {
+            time = chars(SPACER, maxLocaleTimeLength - timeLength) + time;
         }
-
 
         let status = context.status;
 
