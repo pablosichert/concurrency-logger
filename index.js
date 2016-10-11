@@ -3,6 +3,24 @@ import colors from 'ansi-256-colors';
 const SPACER = colors.fg.getRgb(1, 1, 1) + '┈' + colors.reset;
 const GET_LEVEL = responseTime => Math.floor(responseTime / 50) - 1;
 
+function join(strings, ...values) {
+    const indent = strings[0].match(/\n( *)/)[1];
+
+    let result = '';
+
+    for (let i = 0; i < strings.length; i++) {
+        const split = strings[i].split(indent);
+
+        result += (split[1] || '') + (values[i] || '');
+
+        if (i !== strings.length - 1) {
+            result += ' ';
+        }
+    }
+
+    return result;
+}
+
 function colorize(color = 0) {
     if (typeof color === 'number') {
         if (color <= 0) {
@@ -71,7 +89,11 @@ function printToConsole(width, slots, slot, colorizer) {
                 }
 
                 // eslint-disable-next-line no-console
-                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(' ')} ${formatLine(line)}`);
+                console.log(join`
+                    ${new Array(metaLength + 1).join(' ')}
+                    ${_slots.join(' ')}
+                    ${formatLine(line)}
+                `);
             }
         };
     };
@@ -119,7 +141,12 @@ export default function createLogger(options = {}) {
         }
 
         // eslint-disable-next-line no-console
-        console.log(`⟶   ${method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
+        console.log(join`
+            ⟶   ${method}
+            ${new Array(6).join(SPACER)}
+            ${openSlot.join(SPACER)}
+            ${context.originalUrl}
+        `);
 
         const printer = printToConsole(width, slots, slot, colorizer);
 
@@ -167,6 +194,12 @@ export default function createLogger(options = {}) {
         slots[slot] = null;
 
         // eslint-disable-next-line no-console
-        console.log(`${status} ${method} ${time} ${closeSlot.join(SPACER)} ${context.originalUrl}`);
+        console.log(join`
+            ${status}
+            ${method}
+            ${time}
+            ${closeSlot.join(SPACER)}
+            ${context.originalUrl}
+        `);
     };
 }
