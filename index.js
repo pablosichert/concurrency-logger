@@ -80,8 +80,14 @@ function printToConsole(width, slots, slot, colorizer) {
             const messageWidth = width - metaLength - slots.length * 2 - 1;
 
             const now = Date.now();
-            const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : ' ');
-            _slots[slot] = format ? format('╎') : _slots[slot].replace('│', '╎');
+
+            const _slots = slots.map(slot =>
+                slot ? colorizer(now - slot)('│') : ' '
+            );
+
+            _slots[slot] = (
+                format ? format('╎') : _slots[slot].replace('│', '╎')
+            );
 
             for (let i = 0; i < message.length; i = i + messageWidth) {
                 let line = message.substr(i, messageWidth);
@@ -133,7 +139,10 @@ export default function createLogger(options = {}) {
             slot = slots.length - 1;
         }
 
-        const openSlot = slots.map(slot => slot ? colorizer(start - slot)('│') : SPACER);
+        const openSlot = slots.map(slot =>
+            slot ? colorizer(start - slot)('│') : SPACER
+        );
+
         openSlot[slot] = '┬';
         slots[slot] = start;
 
@@ -193,7 +202,10 @@ export default function createLogger(options = {}) {
             status = colorize(6)(status);
         }
 
-        const closeSlot = slots.map(slot => slot ? colorizer(end - slot)('│') : SPACER);
+        const closeSlot = slots.map(slot =>
+            slot ? colorizer(end - slot)('│') : SPACER
+        );
+
         closeSlot[slot] = timeColorize('┴');
         slots[slot] = null;
 
