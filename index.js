@@ -124,22 +124,16 @@ export default function createLogger(options = {}) {
         const printer = printToConsole(width, slots, slot, colorizer);
 
         const log = printer();
-        const info = printer(colorize('info'));
-        const error = printer(colorize(6));
+        log.info = printer(colorize('info'));
+        log.error = printer(colorize(6));
 
         context.log = log;
-
-        context.logger = {
-            log,
-            info,
-            error
-        };
 
         try {
             await next();
         } catch(error) {
             context.status = 500;
-            context.logger.error(error);
+            log.error(error);
         }
 
         const end = Date.now();
