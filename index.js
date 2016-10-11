@@ -1,6 +1,10 @@
-import colors from 'ansi-256-colors';
+import colors, { fg, reset as colorEnd } from 'ansi-256-colors';
 
-const SPACER = colors.fg.getRgb(1, 1, 1) + '┈' + colors.reset;
+const {
+    getRgb: rgb
+} = fg;
+
+const SPACER = rgb(1, 1, 1) + '┈' + colorEnd;
 const GET_LEVEL = responseTime => Math.floor(responseTime / 50) - 1;
 
 function join(strings, ...values) {
@@ -33,7 +37,7 @@ function colorize(color = 0) {
             green = 0;
         }
 
-        return character => colors.fg.getRgb(5, green, 0) + character + colors.reset;
+        return character => rgb(5, green, 0) + character + colorEnd;
     } else {
         let format;
 
@@ -42,7 +46,7 @@ function colorize(color = 0) {
         }
 
         if (format) {
-            return character => format + character + colors.reset;
+            return character => format + character + colorEnd;
         } else {
             return character => character;
         }
