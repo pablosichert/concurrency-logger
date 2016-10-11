@@ -31,6 +31,52 @@ function colorize(color = 0) {
     }
 }
 
+function printToConsole(width, slots, slot, colorizer) {
+    return (format, formatLine) => {
+        return (...args) => {
+            if (!formatLine) {
+                if (format) {
+                    formatLine = format;
+                } else {
+                    formatLine = string => string;
+                }
+            }
+
+            const message = args.map(arg => {
+                if (arg instanceof Error) {
+                    return arg.stack;
+                }
+
+                if (arg instanceof Object) {
+                    return JSON.stringify(arg, null, 2).replace(/\\n/g, '\n');
+                }
+
+                return arg;
+            }).join(' ');
+
+            const metaLength = 14;
+            const messageWidth = width - metaLength - slots.length * 2 - 1;
+
+            const now = Date.now();
+            const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : ' ');
+            _slots[slot] = format ? format('╎') : _slots[slot].replace('│', '╎');
+
+            for (let i = 0; i < message.length; i = i + messageWidth) {
+                let line = message.substr(i, messageWidth);
+
+                const lineBreak = line.indexOf('\n');
+                if (lineBreak >= 0) {
+                    line = line.substr(0, lineBreak);
+                    i = i - messageWidth + lineBreak + 1;
+                }
+
+                // eslint-disable-next-line no-console
+                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(' ')} ${formatLine(line)}`);
+            }
+        };
+    };
+}
+
 export default function createLogger(options = {}) {
     const {
         minSlots = 1,
@@ -75,51 +121,11 @@ export default function createLogger(options = {}) {
         // eslint-disable-next-line no-console
         console.log(`⟶   ${method} ${new Array(6).join(SPACER)} ${openSlot.join(SPACER)} ${context.originalUrl}`);
 
-        const logger = (format, formatLine) => (...args) => {
-            if (!formatLine) {
-                if (format) {
-                    formatLine = format;
-                } else {
-                    formatLine = string => string;
-                }
-            }
+        const printer = printToConsole(width, slots, slot, colorizer);
 
-            const message = args.map(arg => {
-                if (arg instanceof Error) {
-                    return arg.stack;
-                }
-
-                if (arg instanceof Object) {
-                    return JSON.stringify(arg, null, 2).replace(/\\n/g, '\n');
-                }
-
-                return arg;
-            }).join(' ');
-
-            const metaLength = 14;
-            const messageWidth = width - metaLength - slots.length * 2 - 1;
-
-            const now = Date.now();
-            const _slots = slots.map(slot => slot ? colorizer(now - slot)('│') : ' ');
-            _slots[slot] = format ? format('╎') : _slots[slot].replace('│', '╎');
-
-            for (let i = 0; i < message.length; i = i + messageWidth) {
-                let line = message.substr(i, messageWidth);
-
-                const lineBreak = line.indexOf('\n');
-                if (lineBreak >= 0) {
-                    line = line.substr(0, lineBreak);
-                    i = i - messageWidth + lineBreak + 1;
-                }
-
-                // eslint-disable-next-line no-console
-                console.log(`${new Array(metaLength + 1).join(' ')} ${_slots.join(' ')} ${formatLine(line)}`);
-            }
-        };
-
-        const log = logger();
-        const info = logger(colorize('info'));
-        const error = logger(colorize(6));
+        const log = printer();
+        const info = printer(colorize('info'));
+        const error = printer(colorize(6));
 
         context.log = log;
 
