@@ -134,7 +134,7 @@ export default function createLogger(options = {}) {
     };
 
     return async function logger(context, next) {
-        const start = Date.now();
+        const start = new Date;
 
         let slot;
         for (let i = 0; i < slots.length; i++) {
@@ -154,7 +154,7 @@ export default function createLogger(options = {}) {
         );
 
         openSlot[slot] = '┬';
-        slots[slot] = start;
+        slots[slot] = +start;
 
         let method = context.method;
         method = method.substr(0, 4);
@@ -163,10 +163,12 @@ export default function createLogger(options = {}) {
             method += chars(SPACER, 4 - method.length);
         }
 
+        const localeTime = start.toLocaleTimeString();
+
         // eslint-disable-next-line no-console
         console.log(join`
-            ⟶   ${method}
-            ${chars(SPACER, 5)}
+            ⟶   ${localeTime}
+            ${method}
             ${openSlot.join(SPACER)}
             ${context.originalUrl}
         `);
@@ -186,14 +188,16 @@ export default function createLogger(options = {}) {
             log.error(error);
         }
 
-        const end = Date.now();
+        const end = new Date;
         const responseTime = end - start;
         const timeColorize = colorizer(responseTime);
 
         let time = `${responseTime}ms`;
 
-        if (time.length < 5) {
-            time = chars(SPACER, 5 - time.length) + time;
+        const timeLength = localeTime.length;
+
+        if (time.length < timeLength) {
+            time = chars(SPACER, timeLength - time.length) + time;
         }
 
         time = timeColorize(time);
@@ -222,8 +226,8 @@ export default function createLogger(options = {}) {
         // eslint-disable-next-line no-console
         console.log(join`
             ${status}
-            ${method}
             ${time}
+            ${method}
             ${closeSlot.join(SPACER)}
             ${context.originalUrl}
         `);
