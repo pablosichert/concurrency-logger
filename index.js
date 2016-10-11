@@ -194,13 +194,15 @@ export default function createLogger(options = {}) {
 
         let time = `${responseTime}ms`;
 
-        const timeLength = localeTime.length;
-
-        if (time.length < timeLength) {
-            time = chars(SPACER, timeLength - time.length) + time;
-        }
+        const timeLength = time.length;
+        const localeTimeLength = localeTime.length;
 
         time = timeColorize(time);
+
+        if (timeLength < localeTimeLength) {
+            time = chars(SPACER, localeTimeLength - timeLength) + time;
+        }
+
 
         let status = context.status;
 
