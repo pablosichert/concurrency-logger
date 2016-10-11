@@ -86,9 +86,7 @@ export default function createLogger(options = {}) {
 
             const message = args.map(arg => {
                 if (arg instanceof Error) {
-                    return JSON.stringify(arg, Object.getOwnPropertyNames(arg))
-                        .replace(/\\n/g, '\n')
-                    ;
+                    return arg.stack;
                 }
 
                 if (arg instanceof Object) {
