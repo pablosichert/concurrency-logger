@@ -90,7 +90,7 @@ export default function createLogger(options = {}) {
                 }
 
                 if (arg instanceof Object) {
-                    return JSON.stringify(arg).replace(/\\n/g, '\n');
+                    return JSON.stringify(arg, null, 2).replace(/\\n/g, '\n');
                 }
 
                 return arg;
