@@ -25,6 +25,16 @@ function join(strings, ...values) {
     return result;
 }
 
+function chars(character, num) {
+    let string = '';
+
+    for (let i = 0; i < num; i++) {
+        string += character;
+    }
+
+    return string;
+}
+
 function colorize(color = 0) {
     if (typeof color === 'number') {
         if (color <= 0) {
@@ -100,7 +110,7 @@ function printToConsole(width, slots, slot, colorizer) {
 
                 // eslint-disable-next-line no-console
                 console.log(join`
-                    ${new Array(metaLength + 1).join(' ')}
+                    ${chars(' ', metaLength)}
                     ${_slots.join(' ')}
                     ${formatLine(line)}
                 `);
@@ -150,13 +160,13 @@ export default function createLogger(options = {}) {
         method = method.substr(0, 4);
 
         if (method.length < 4) {
-            method += new Array(5 - method.length).join(SPACER);
+            method += chars(SPACER, 4 - method.length);
         }
 
         // eslint-disable-next-line no-console
         console.log(join`
             ⟶   ${method}
-            ${new Array(6).join(SPACER)}
+            ${chars(SPACER, 5)}
             ${openSlot.join(SPACER)}
             ${context.originalUrl}
         `);
@@ -183,7 +193,7 @@ export default function createLogger(options = {}) {
         let time = `${responseTime}ms`;
 
         if (time.length < 5) {
-            time = new Array(6 - time.length).join(SPACER) + time;
+            time = chars(SPACER, 5 - time.length) + time;
         }
 
         time = timeColorize(time);
