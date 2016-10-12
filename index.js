@@ -173,6 +173,21 @@ export default function createLogger(options = {}) {
             slot = slots.length - 1;
         }
 
+        const printer = printToConsole(
+            () => maxLocaleTimeLength,
+            width,
+            slim,
+            slots,
+            slot,
+            colorizer
+        );
+
+        const log = printer();
+        log.info = printer(colorize('info'));
+        log.error = printer(colorize(6));
+
+        context.log = log;
+
         const openSlot = slots.map(slot =>
             slot ? colorizer(start - slot)('│') : SPACER
         );
@@ -210,21 +225,6 @@ export default function createLogger(options = {}) {
             ${openSlot.join(slim ? '' : SPACER)}
             ${context.originalUrl}
         `);
-
-        const printer = printToConsole(
-            () => maxLocaleTimeLength,
-            width,
-            slim,
-            slots,
-            slot,
-            colorizer
-        );
-
-        const log = printer();
-        log.info = printer(colorize('info'));
-        log.error = printer(colorize(6));
-
-        context.log = log;
 
         try {
             await next();
