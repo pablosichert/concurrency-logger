@@ -63,7 +63,7 @@ function colorize(color = 0) {
     }
 }
 
-function printToConsole(maxLocaleTimeLength, width, slots, slot, colorizer) {
+function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer) {
     return (format, formatLine) => {
         return (...args) => {
             if (!formatLine) {
@@ -119,10 +119,12 @@ function printToConsole(maxLocaleTimeLength, width, slots, slot, colorizer) {
 
                 const meta = chars(' ', 4 + timeLength + 5);
 
+                const slots = _slots.join(slim ? '' : ' ');
+
                 // eslint-disable-next-line no-console
                 console.log(join`
                     ${meta}
-                    ${_slots.join(' ')}
+                    ${slots}
                     ${formatLine(line)}
                 `);
             }
@@ -135,7 +137,8 @@ export default function createLogger(options = {}) {
         minSlots = 1,
         getLevel = GET_LEVEL,
         width = 80,
-        timestamp: showTimestamp = false
+        timestamp: showTimestamp = false,
+        slim = false
     } = options;
 
     const slots = new Array(minSlots).fill(null);
@@ -204,13 +207,14 @@ export default function createLogger(options = {}) {
         console.log(join`
             ⟶   ${localeTime}
             ${method}
-            ${openSlot.join(SPACER)}
+            ${openSlot.join(slim ? '' : SPACER)}
             ${context.originalUrl}
         `);
 
         const printer = printToConsole(
             () => maxLocaleTimeLength,
             width,
+            slim,
             slots,
             slot,
             colorizer
@@ -269,7 +273,7 @@ export default function createLogger(options = {}) {
             ${status}
             ${time}
             ${method}
-            ${closeSlot.join(SPACER)}
+            ${closeSlot.join(slim ? '' : SPACER)}
             ${context.originalUrl}
         `);
     };
