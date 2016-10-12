@@ -88,9 +88,15 @@ function printToConsole(maxLocaleTimeLength, width, slots, slot, colorizer) {
 
             maxLocaleTimeLength = maxLocaleTimeLength();
 
-            const messageWidth = (
-                width - 4 - maxLocaleTimeLength - 6 - slots.length * 2 - 1
-            );
+            let messageWidth;
+
+            if (width) {
+                messageWidth = (
+                    width - 4 - maxLocaleTimeLength - 6 - slots.length * 2 - 1
+                );
+            } else {
+                messageWidth = message.length;
+            }
 
             const now = new Date;
 
