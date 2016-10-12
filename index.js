@@ -86,13 +86,13 @@ function printToConsole(maxLocaleTimeLength, width, slots, slot, colorizer) {
                 return arg;
             }).join(' ');
 
-            maxLocaleTimeLength = maxLocaleTimeLength();
+            const timeLength = maxLocaleTimeLength();
 
             let messageWidth;
 
             if (width) {
                 messageWidth = (
-                    width - 4 - maxLocaleTimeLength - 6 - slots.length * 2 - 1
+                    width - 4 - timeLength - 6 - slots.length * 2 - 1
                 );
             } else {
                 messageWidth = message.length;
@@ -117,7 +117,7 @@ function printToConsole(maxLocaleTimeLength, width, slots, slot, colorizer) {
                     i = i - messageWidth + lineBreak + 1;
                 }
 
-                const meta = chars(' ', 4 + maxLocaleTimeLength + 5);
+                const meta = chars(' ', 4 + timeLength + 5);
 
                 // eslint-disable-next-line no-console
                 console.log(join`
