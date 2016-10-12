@@ -138,7 +138,9 @@ export default function createLogger(options = {}) {
         getLevel = GET_LEVEL,
         width = 80,
         timestamp: showTimestamp = false,
-        slim = false
+        slim = false,
+        req = context => context.originalUrl,
+        res = req
     } = options;
 
     const slots = new Array(minSlots).fill(null);
@@ -223,7 +225,7 @@ export default function createLogger(options = {}) {
             ⟶   ${localeTime}
             ${method}
             ${openSlot.join(slim ? '' : SPACER)}
-            ${context.originalUrl}
+            ${req(context)}
         `);
 
         try {
@@ -274,7 +276,7 @@ export default function createLogger(options = {}) {
             ${time}
             ${method}
             ${closeSlot.join(slim ? '' : SPACER)}
-            ${context.originalUrl}
+            ${res(context)}
         `);
     };
 }
