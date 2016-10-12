@@ -134,7 +134,8 @@ export default function createLogger(options = {}) {
     const {
         minSlots = 1,
         getLevel = GET_LEVEL,
-        width = 80
+        width = 80,
+        timestamp: showTimestamp = false
     } = options;
 
     const slots = new Array(minSlots).fill(null);
@@ -145,7 +146,13 @@ export default function createLogger(options = {}) {
         return colorize(level);
     };
 
-    let maxLocaleTimeLength = (new Date).toLocaleTimeString().length;
+    let maxLocaleTimeLength;
+
+    if (showTimestamp) {
+        maxLocaleTimeLength = (new Date).toLocaleTimeString().length;
+    } else {
+        maxLocaleTimeLength = 5;
+    }
 
     return async function logger(context, next) {
         const start = new Date;
@@ -177,14 +184,20 @@ export default function createLogger(options = {}) {
             method += chars(SPACER, 4 - method.length);
         }
 
-        let localeTime = start.toLocaleTimeString();
+        let localeTime;
 
-        if (localeTime.length > maxLocaleTimeLength) {
-            maxLocaleTimeLength = localeTime.length;
-        } else if (localeTime.length < maxLocaleTimeLength) {
-            localeTime += (
-                chars(SPACER, maxLocaleTimeLength - localeTime.length)
-            );
+        if (showTimestamp) {
+            localeTime = start.toLocaleTimeString();
+
+            if (localeTime.length > maxLocaleTimeLength) {
+                maxLocaleTimeLength = localeTime.length;
+            } else if (localeTime.length < maxLocaleTimeLength) {
+                localeTime += (
+                    chars(SPACER, maxLocaleTimeLength - localeTime.length)
+                );
+            }
+        } else {
+            localeTime = chars(SPACER, maxLocaleTimeLength);
         }
 
         // eslint-disable-next-line no-console
