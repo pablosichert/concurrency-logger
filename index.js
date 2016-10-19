@@ -137,10 +137,10 @@ function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer
             }
 
             breakLines(message, messageWidth, (line, i, lines) => {
-                let _meta = meta(i, lines.length);
+                let $meta = meta(i, lines.length);
 
-                if (!_meta) {
-                    _meta = chars(' ', 4 + timeLength + 5);
+                if (!$meta) {
+                    $meta = chars(' ', 4 + timeLength + 5);
                 }
 
                 _slots[slot] = (
@@ -151,12 +151,12 @@ function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer
                     )
                 );
 
-                const __slots = _slots.join(slim ? '' : separator);
+                const $slots = _slots.join(slim ? '' : separator);
 
                 // eslint-disable-next-line no-console
                 console.log(join`
-                    ${_meta}
-                    ${__slots}
+                    ${$meta}
+                    ${$slots}
                     ${formatLine(line)}
                 `);
             });
@@ -224,31 +224,34 @@ export default function createLogger(options = {}) {
 
         context.log = log;
 
-        let method = context.method;
-        method = method.substr(0, 4);
+        const {
+            method
+        } = context;
 
-        if (method.length < 4) {
-            method += chars(SPACER, 4 - method.length);
+        let $method = method.substr(0, 4);
+
+        if ($method.length < 4) {
+            $method += chars(SPACER, 4 - method.length);
         }
 
         {
-            let localeTime;
+            let $time;
 
             if (showTimestamp) {
-                localeTime = start.toLocaleTimeString();
+                $time = start.toLocaleTimeString();
 
-                if (localeTime.length > maxLocaleTimeLength) {
-                    maxLocaleTimeLength = localeTime.length;
-                } else if (localeTime.length < maxLocaleTimeLength) {
-                    localeTime += (
-                        chars(SPACER, maxLocaleTimeLength - localeTime.length)
+                if ($time.length > maxLocaleTimeLength) {
+                    maxLocaleTimeLength = $time.length;
+                } else if ($time.length < maxLocaleTimeLength) {
+                    $time += (
+                        chars(SPACER, maxLocaleTimeLength - $time.length)
                     );
                 }
             } else {
-                localeTime = chars(SPACER, maxLocaleTimeLength);
+                $time = chars(SPACER, maxLocaleTimeLength);
             }
 
-            const meta = i => !i && `⟶   ${localeTime} ${method}`;
+            const meta = i => !i && `⟶   ${$time} ${$method}`;
 
             const print = printer(meta, undefined, undefined, i => i ? '│' : '┬');
 
@@ -263,35 +266,40 @@ export default function createLogger(options = {}) {
         }
 
         const end = new Date;
-        const responseTime = end - start;
-        const timeColorize = colorizer(responseTime);
+        const duration = end - start;
 
-        let time = `${responseTime}ms`;
+        let $duration = `${duration}ms`;
 
-        const timeLength = time.length;
+        const durationLength = $duration.length;
 
-        time = timeColorize(time);
+        $duration = colorizer(duration)($duration);
 
-        if (timeLength < maxLocaleTimeLength) {
-            time = chars(SPACER, maxLocaleTimeLength - timeLength) + time;
+        if (durationLength < maxLocaleTimeLength) {
+            $duration = (
+                chars(SPACER, maxLocaleTimeLength - durationLength) + $duration
+            );
         }
 
-        let status = context.status;
+        const {
+            status
+        } = context;
+
+        let $status;
 
         if (status >= 100 && status < 200) {
-            status = colorize('info')(status);
+            $status = colorize('info')(status);
         } else if (status < 300) {
-            // Success
+            $status = status;
         } else if (status >= 300 && status < 400) {
-            status = colorize('warning')(status);
+            $status = colorize('warning')(status);
         } else if (status < 500) {
-            status = colorize('error')(status);
+            $status = colorize('error')(status);
         } else {
-            status = colorize('fatal')(status);
+            $status = colorize('fatal')(status);
         }
 
         {
-            const meta = (i, length) => i === length - 1 && `${status} ${time} ${method}`;
+            const meta = (i, length) => i === length - 1 && `${$status} ${$duration} ${$method}`;
 
             const print = printer(meta, undefined, undefined, (i, length) => i === length - 1 ? '┴' : '│');
 
