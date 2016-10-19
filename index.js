@@ -172,7 +172,7 @@ export default function createLogger(options = {}) {
         timestamp: showTimestamp = false,
         slim = false,
         req = context => context.originalUrl,
-        res = req
+        res = context => context.originalUrl
     } = options;
 
     const slots = new Array(minSlots).fill(null);
