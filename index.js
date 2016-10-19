@@ -207,6 +207,8 @@ export default function createLogger(options = {}) {
             slot = slots.length - 1;
         }
 
+        slots[slot] = +start;
+
         const printer = printToConsole(
             () => maxLocaleTimeLength,
             width,
@@ -221,8 +223,6 @@ export default function createLogger(options = {}) {
         log.error = printer(undefined, colorize('fatal'), undefined, () => '╎', ' ');
 
         context.log = log;
-
-        slots[slot] = +start;
 
         let method = context.method;
         method = method.substr(0, 4);
