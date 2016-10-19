@@ -51,8 +51,19 @@ function colorize(color = 0) {
     } else {
         let format;
 
-        if (color === 'info') {
+        switch (color) {
+        case 'info':
             format = colors.fg.standard[4];
+            break;
+        case 'warning':
+            format = rgb(5, 5, 0);
+            break;
+        case 'error':
+            format = rgb(5, 2, 0);
+            break;
+        case 'fatal':
+            format = rgb(5, 0, 0);
+            break;
         }
 
         if (format) {
@@ -186,7 +197,7 @@ export default function createLogger(options = {}) {
 
         const log = printer();
         log.info = printer(colorize('info'));
-        log.error = printer(colorize(6));
+        log.error = printer(colorize('fatal'));
 
         context.log = log;
 
@@ -256,11 +267,11 @@ export default function createLogger(options = {}) {
         } else if (status < 300) {
             // Success
         } else if (status >= 300 && status < 400) {
-            status = colorize(1)(status);
+            status = colorize('warning')(status);
         } else if (status < 500) {
-            status = colorize(4)(status);
+            status = colorize('error')(status);
         } else {
-            status = colorize(6)(status);
+            status = colorize('fatal')(status);
         }
 
         const closeSlot = slots.map(slot =>
