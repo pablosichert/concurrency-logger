@@ -35,6 +35,27 @@ function chars(character, num) {
     return string;
 }
 
+function breakLines(message, messageWidth, map) {
+    const lines = [];
+
+    for (let i = 0; i < message.length; i = i + messageWidth) {
+        let line = message.substr(i, messageWidth);
+
+        const lineBreak = line.indexOf('\n');
+
+        if (lineBreak >= 0) {
+            line = line.substr(0, lineBreak);
+            i = i - messageWidth + lineBreak + 1;
+        }
+
+        lines.push(line);
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+        map(lines[i], i, lines);
+    }
+}
+
 function colorize(color = 0) {
     if (typeof color === 'number') {
         if (color <= 0) {
@@ -75,7 +96,7 @@ function colorize(color = 0) {
 }
 
 function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer) {
-    return (format, formatLine) => {
+    return (meta = () => false, format, formatLine, char, separator = SPACER) => {
         return (...args) => {
             if (!formatLine) {
                 if (format) {
@@ -99,6 +120,12 @@ function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer
 
             const timeLength = maxLocaleTimeLength();
 
+            const now = new Date;
+
+            const _slots = slots.map(slot =>
+                slot ? colorizer(now - slot)('│') : separator
+            );
+
             let messageWidth;
 
             if (width) {
@@ -109,36 +136,30 @@ function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer
                 messageWidth = message.length;
             }
 
-            const now = new Date;
+            breakLines(message, messageWidth, (line, i, lines) => {
+                let _meta = meta(i, lines.length);
 
-            const _slots = slots.map(slot =>
-                slot ? colorizer(now - slot)('│') : ' '
-            );
-
-            _slots[slot] = (
-                format ? format('╎') : _slots[slot].replace('│', '╎')
-            );
-
-            for (let i = 0; i < message.length; i = i + messageWidth) {
-                let line = message.substr(i, messageWidth);
-
-                const lineBreak = line.indexOf('\n');
-                if (lineBreak >= 0) {
-                    line = line.substr(0, lineBreak);
-                    i = i - messageWidth + lineBreak + 1;
+                if (!_meta) {
+                    _meta = chars(' ', 4 + timeLength + 5);
                 }
 
-                const meta = chars(' ', 4 + timeLength + 5);
+                _slots[slot] = (
+                    format ? (
+                        format(char(i, lines.length))
+                    ) : (
+                        colorizer(now - slots[slot])(char(i, lines.length))
+                    )
+                );
 
-                const slots = _slots.join(slim ? '' : ' ');
+                const __slots = _slots.join(slim ? '' : separator);
 
                 // eslint-disable-next-line no-console
                 console.log(join`
-                    ${meta}
-                    ${slots}
+                    ${_meta}
+                    ${__slots}
                     ${formatLine(line)}
                 `);
-            }
+            });
         };
     };
 }
@@ -195,17 +216,12 @@ export default function createLogger(options = {}) {
             colorizer
         );
 
-        const log = printer();
-        log.info = printer(colorize('info'));
-        log.error = printer(colorize('fatal'));
+        const log = printer(undefined, undefined, undefined, () => '╎', ' ');
+        log.info = printer(undefined, colorize('info'), undefined, () => '╎', ' ');
+        log.error = printer(undefined, colorize('fatal'), undefined, () => '╎', ' ');
 
         context.log = log;
 
-        const openSlot = slots.map(slot =>
-            slot ? colorizer(start - slot)('│') : SPACER
-        );
-
-        openSlot[slot] = '┬';
         slots[slot] = +start;
 
         let method = context.method;
@@ -215,29 +231,29 @@ export default function createLogger(options = {}) {
             method += chars(SPACER, 4 - method.length);
         }
 
-        let localeTime;
+        {
+            let localeTime;
 
-        if (showTimestamp) {
-            localeTime = start.toLocaleTimeString();
+            if (showTimestamp) {
+                localeTime = start.toLocaleTimeString();
 
-            if (localeTime.length > maxLocaleTimeLength) {
-                maxLocaleTimeLength = localeTime.length;
-            } else if (localeTime.length < maxLocaleTimeLength) {
-                localeTime += (
-                    chars(SPACER, maxLocaleTimeLength - localeTime.length)
-                );
+                if (localeTime.length > maxLocaleTimeLength) {
+                    maxLocaleTimeLength = localeTime.length;
+                } else if (localeTime.length < maxLocaleTimeLength) {
+                    localeTime += (
+                        chars(SPACER, maxLocaleTimeLength - localeTime.length)
+                    );
+                }
+            } else {
+                localeTime = chars(SPACER, maxLocaleTimeLength);
             }
-        } else {
-            localeTime = chars(SPACER, maxLocaleTimeLength);
-        }
 
-        // eslint-disable-next-line no-console
-        console.log(join`
-            ⟶   ${localeTime}
-            ${method}
-            ${openSlot.join(slim ? '' : SPACER)}
-            ${req(context)}
-        `);
+            const meta = i => !i && `⟶   ${localeTime} ${method}`;
+
+            const print = printer(meta, undefined, undefined, i => i ? '│' : '┬');
+
+            print(req(context));
+        }
 
         try {
             await next();
@@ -274,20 +290,14 @@ export default function createLogger(options = {}) {
             status = colorize('fatal')(status);
         }
 
-        const closeSlot = slots.map(slot =>
-            slot ? colorizer(end - slot)('│') : SPACER
-        );
+        {
+            const meta = (i, length) => i === length - 1 && `${status} ${time} ${method}`;
 
-        closeSlot[slot] = timeColorize('┴');
+            const print = printer(meta, undefined, undefined, (i, length) => i === length - 1 ? '┴' : '│');
+
+            print(res(context));
+        }
+
         slots[slot] = null;
-
-        // eslint-disable-next-line no-console
-        console.log(join`
-            ${status}
-            ${time}
-            ${method}
-            ${closeSlot.join(slim ? '' : SPACER)}
-            ${res(context)}
-        `);
     };
 }
