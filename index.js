@@ -95,9 +95,22 @@ function colorize(color = 0) {
     }
 }
 
-function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer) {
-    return (meta = () => false, format, formatLine, char, separator = SPACER) => {
-        return (...args) => {
+function printToConsole({
+    colorizer,
+    maxLocaleTimeLength,
+    slim,
+    slot,
+    slots,
+    width
+}) {
+    return ({
+        char,
+        format,
+        formatLine,
+        meta = () => false,
+        separator = SPACER
+    }) => {
+        return (...messages) => {
             if (!formatLine) {
                 if (format) {
                     formatLine = format;
@@ -106,7 +119,7 @@ function printToConsole(maxLocaleTimeLength, width, slim, slots, slot, colorizer
                 }
             }
 
-            const message = args.map(arg => {
+            const message = messages.map(arg => {
                 if (arg instanceof Error) {
                     return arg.stack;
                 }
@@ -209,18 +222,31 @@ export default function createLogger(options = {}) {
 
         slots[slot] = +start;
 
-        const printer = printToConsole(
-            () => maxLocaleTimeLength,
+        const printer = printToConsole({
+            maxLocaleTimeLength: () => maxLocaleTimeLength,
             width,
             slim,
             slots,
             slot,
             colorizer
-        );
+        });
 
-        const log = printer(undefined, undefined, undefined, () => '╎', ' ');
-        log.info = printer(undefined, colorize('info'), undefined, () => '╎', ' ');
-        log.error = printer(undefined, colorize('fatal'), undefined, () => '╎', ' ');
+        const log = printer({
+            char: () => '╎',
+            separator: ' '
+        });
+
+        log.info = printer({
+            char: () => '╎',
+            format: colorize('info'),
+            separator: ' '
+        });
+
+        log.error = printer({
+            char: () => '╎',
+            format: colorize('fatal'),
+            separator: ' '
+        });
 
         context.log = log;
 
@@ -251,9 +277,10 @@ export default function createLogger(options = {}) {
                 $time = chars(SPACER, maxLocaleTimeLength);
             }
 
-            const meta = i => !i && `⟶   ${$time} ${$method}`;
-
-            const print = printer(meta, undefined, undefined, i => i ? '│' : '┬');
+            const print = printer({
+                char: i => i ? '│' : '┬',
+                meta: i => !i && `⟶   ${$time} ${$method}`
+            });
 
             print(req(context));
         }
@@ -299,9 +326,12 @@ export default function createLogger(options = {}) {
         }
 
         {
-            const meta = (i, length) => i === length - 1 && `${$status} ${$duration} ${$method}`;
-
-            const print = printer(meta, undefined, undefined, (i, length) => i === length - 1 ? '┴' : '│');
+            const print = printer({
+                meta: (i, length) => i === length - 1 && (
+                    `${$status} ${$duration} ${$method}`
+                ),
+                char: (i, length) => i === length - 1 ? '┴' : '│'
+            });
 
             print(res(context));
         }
