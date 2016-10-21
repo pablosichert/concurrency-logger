@@ -147,7 +147,9 @@ function printToConsole({
                 messageWidth = (
                     width - 4 - timeLength - 6 - slots.length * 2 - 1
                 );
-            } else {
+            }
+
+            if (!width || messageWidth < 1) {
                 messageWidth = message.length;
             }
 
