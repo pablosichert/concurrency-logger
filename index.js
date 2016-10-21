@@ -97,11 +97,11 @@ function colorize(color = 0) {
 
 function printToConsole({
     colorizer,
+    getWidth,
     maxLocaleTimeLength,
     slim,
     slot,
-    slots,
-    width
+    slots
 }) {
     return ({
         char,
@@ -140,6 +140,8 @@ function printToConsole({
             );
 
             let messageWidth;
+
+            const width = getWidth();
 
             if (width) {
                 messageWidth = (
@@ -181,12 +183,24 @@ export default function createLogger(options = {}) {
     const {
         minSlots = 1,
         getLevel = GET_LEVEL,
-        width = 80,
+        width,
         timestamp: showTimestamp = false,
         slim = false,
         req = context => context.originalUrl,
         res = context => context.originalUrl
     } = options;
+
+    let getWidth;
+
+    if (width !== undefined) {
+        if (typeof width === 'number') {
+            getWidth = () => width;
+        } else {
+            getWidth = () => false;
+        }
+    } else {
+        getWidth = () => process.stdout.columns;
+    }
 
     const slots = new Array(minSlots).fill(null);
 
@@ -223,8 +237,8 @@ export default function createLogger(options = {}) {
         slots[slot] = +start;
 
         const printer = printToConsole({
+            getWidth,
             maxLocaleTimeLength: () => maxLocaleTimeLength,
-            width,
             slim,
             slots,
             slot,
