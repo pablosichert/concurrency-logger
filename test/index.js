@@ -11,6 +11,10 @@ const expect = (unexpected()
     .use(unexpectedSinon)
 );
 
+Object.defineProperty(process.stdout, 'columns', {
+    get: () => 80
+});
+
 const fixturesDir = 'fixtures';
 
 function reporter(testTitle) {
