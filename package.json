@@ -9,7 +9,7 @@
   "scripts": {
     "compile": "babel ./src --out-dir ./lib",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov",
-    "create-fixtures": "rm ./test/fixtures/* && CREATE_FIXTURES=true npm run test",
+    "create-fixtures": "rm -rf ./test/fixtures && mkdir ./test/fixtures && CREATE_FIXTURES=true npm run test",
     "lint": "eslint .",
     "prepublish": "rm -rf ./lib && npm run compile",
     "preversion": "npm run test",
