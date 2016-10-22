@@ -13,7 +13,7 @@ const expect = (unexpected()
 
 const fixturesDir = 'fixtures';
 
-function reporter(context) {
+function reporter(testTitle) {
     let reporter;
 
     if (process.env.CREATE_FIXTURES) {
@@ -21,7 +21,7 @@ function reporter(context) {
 
         reporter = line => {
             if (!log) {
-                const title = context.test.fullTitle().replace(/\s/g, '_');
+                const title = testTitle.replace(/\s/g, '_');
 
                 const fileName = `${title}.log`;
 
@@ -35,10 +35,10 @@ function reporter(context) {
             log.write(line + '\n');
         };
     } else {
-        context.output = '';
+        this.output = '';
 
         reporter = line => {
-            context.output += line + '\n';
+            this.output += line + '\n';
         };
     }
 
@@ -104,6 +104,21 @@ describe('createLogger', () => {
 });
 
 describe('logger', () => {
+    before(function () {
+        this.createLogger = title => opts => {
+            const logger = createLogger({
+                ...opts,
+                reporter: reporter.bind(this)(title)
+            });
+
+            return logger;
+        };
+    });
+
+    after(function () {
+        delete this.createLogger;
+    });
+
     beforeEach(function () {
         this.clock = sinon.useFakeTimers(+new Date('2000'));
     });
@@ -113,17 +128,12 @@ describe('logger', () => {
     });
 
     describe('configured with defaults', () => {
-        before(function () {
-            this.logger = createLogger({
-                reporter: reporter(this)
-            });
-        });
-
-        after(function () {
-            delete this.logger;
-        });
-
         it('should log a request and a response', async function () {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
             const context = {
                 method: 'GET',
                 originalUrl: '/'
@@ -133,9 +143,53 @@ describe('logger', () => {
                 context.status = 200;
             };
 
-            await this.logger(context, next);
+            await logger(context, next);
 
-            expect(this.output, 'to equal', fixtures[this.test.fullTitle()]);
+            expect(this.output, 'to equal', fixtures[title]);
+        });
+
+        describe('status codes', () => {
+            const types = {
+                '1xx (Informational)': [
+                    100, 101, 102
+                ],
+                '2xx (Success)': [
+                    200, 201, 202, 203, 204, 205, 206, 207, 208, 226,
+                ],
+                '3xx (Redirection)': [
+                    300, 301, 302, 303, 304, 305, 306, 307, 308,
+                ],
+                '4xx (Client error)': [
+                    400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 420, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 444, 449,
+                ],
+                '5xx (Server error)': [
+                    500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511
+                ]
+            };
+
+            for (const type of Object.keys(types)) {
+                it(`should format ${type}`, async function () {
+                    const title = this.test.fullTitle();
+                    const createLogger = this.createLogger(title);
+
+                    const logger = createLogger();
+
+                    for (const status of types[type]) {
+                        const context = {
+                            method: 'GET',
+                            originalUrl: '/'
+                        };
+
+                        const next = () => {
+                            context.status = status;
+                        };
+
+                        await logger(context, next);
+                    }
+
+                    expect(this.output, 'to equal', fixtures[title]);
+                });
+            }
         });
     });
 });
