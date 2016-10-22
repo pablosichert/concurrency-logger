@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Log HTTP requests/responses separately, visualize their concurrency and report logs/errors in context of a request",
   "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "compile": "babel ./src --out-dir ./lib",
     "test": "mocha --compilers js:babel-core/register"
