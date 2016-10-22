@@ -1,5 +1,6 @@
-import { readdirSync, readFileSync } from 'fs';
+import { readdirSync, readFileSync, createWriteStream } from 'fs';
 import { resolve } from 'path';
+import { fg, reset as colorEnd } from 'ansi-256-colors';
 import { clone as unexpected } from 'unexpected';
 import sinon from 'sinon';
 import unexpectedSinon from 'unexpected-sinon';
@@ -10,26 +11,68 @@ const expect = (unexpected()
     .use(unexpectedSinon)
 );
 
-function reporter(context) {
-    context.output = '';
+const fixturesDir = 'fixtures';
 
-    return line => {
-        context.output += line + '\n';
-    };
+function reporter(context) {
+    let reporter;
+
+    if (process.env.CREATE_FIXTURES) {
+        let log;
+
+        reporter = line => {
+            if (!log) {
+                const title = context.test.fullTitle().replace(/\s/g, '_');
+
+                const fileName = `${title}.log`;
+
+                print(fg.getRgb(0, 5, 0) + '+' + colorEnd, fileName);
+
+                log = createWriteStream(
+                    resolve(__dirname, `${fixturesDir}/${fileName}`)
+                );
+            }
+
+            log.write(line + '\n');
+        };
+    } else {
+        context.output = '';
+
+        reporter = line => {
+            context.output += line + '\n';
+        };
+    }
+
+    return reporter;
 }
 
-const fixtures = (readdirSync(resolve(__dirname, './fixtures'))
-    .reduce((fixtures, file) => {
-        const title = file.replace(/_/g, ' ').split('.log')[0];
+let fixtures;
 
-        fixtures[title] = readFileSync(
-            resolve(__dirname, `./fixtures/${file}`),
-            { encoding: 'utf-8' }
-        );
+if (process.env.CREATE_FIXTURES) {
+    fixtures = {};
 
-        return fixtures;
-    }, {})
-);
+    /* eslint-disable no-console */
+    const log = console.log.bind(console);
+
+    console.log = () => {};
+    /* eslint-enable */
+
+    log(`Writing to ${resolve('/test', fixturesDir)}`);
+
+    global.print = log;
+} else {
+    fixtures = (readdirSync(resolve(__dirname, fixturesDir))
+        .reduce((fixtures, file) => {
+            const title = file.replace(/_/g, ' ').split('.log')[0];
+
+            fixtures[title] = readFileSync(
+                resolve(__dirname, `${fixturesDir}/${file}`),
+                { encoding: 'utf-8' }
+            );
+
+            return fixtures;
+        }, {})
+    );
+}
 
 describe('createLogger', () => {
     it('should create a koa compatible middleware', async () => {
