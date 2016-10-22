@@ -23,6 +23,8 @@ function join(strings, ...values) {
         }
     }
 
+    result = result.replace(/\s+$/, '');
+
     return result;
 }
 
