@@ -81,28 +81,18 @@ describe('createLogger', () => {
         try {
             const logger = createLogger();
 
-            const method = sinon.spy(() => 'GET');
-            const originalUrl = sinon.spy(() => '/');
-            const status = sinon.spy(() => 200);
-
             const context = {
-                get method() {
-                    return method();
-                },
-                get originalUrl() {
-                    return originalUrl();
-                },
-                get status() {
-                    return status();
-                }
+                method: 'GET',
+                originalUrl: '/',
+                status: 500
             };
 
-            const next = sinon.spy(() => Promise.resolve());
+            const next = sinon.spy(() => {
+                context.status = 200;
+            });
 
             await logger(context, next);
 
-            expect(method, 'was called');
-            expect(originalUrl, 'was called');
             expect(next, 'was called');
         } catch (error) {
             throw error;
