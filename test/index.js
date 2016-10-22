@@ -222,6 +222,41 @@ describe('logger', () => {
             expect(this.output, 'to equal', fixtures[title]);
         });
 
+        it('should color response time', async function () {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const resolvers = [];
+            const loggers = [];
+
+            for (let i = 0; i < 8; i++) {
+                const context = {
+                    method: 'GET',
+                    originalUrl: '/'
+                };
+
+                const next = async () => {
+                    await new Promise(resolve => {
+                        resolvers.push(resolve);
+                    });
+
+                    context.status = 200;
+                };
+
+                loggers.push(logger(context, next));
+            }
+
+            while (resolvers.length) {
+                resolvers.pop()();
+                await loggers.pop();
+                this.clock.tick(50);
+            }
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
+
         it('should log an unhandled error and set status to 500', async function () {
             const title = this.test.fullTitle();
             const createLogger = this.createLogger(title);
