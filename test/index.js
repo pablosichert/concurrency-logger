@@ -191,5 +191,31 @@ describe('logger', () => {
                 });
             }
         });
+
+        it('should format response time', async function () {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            for (const responseTime of [
+                0, 100, 1000, 10000, 100000, 1000000
+            ]) {
+                const context = {
+                    method: 'GET',
+                    originalUrl: '/'
+                };
+
+                const next = () => {
+                    this.clock.tick(responseTime);
+
+                    context.status = 200;
+                };
+
+                await logger(context, next);
+            }
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
     });
 });
