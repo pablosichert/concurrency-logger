@@ -319,7 +319,7 @@ export default function createLogger(options = {}) {
 
         let $duration;
 
-        if (duration > 1000) {
+        if (duration >= 1000) {
             let fixed = 6 - String(duration).length;
 
             if (fixed < 0) {
