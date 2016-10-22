@@ -8,6 +8,9 @@
   ],
   "scripts": {
     "compile": "babel ./src --out-dir ./lib",
+    "lint": "eslint .",
+    "prepublish": "rm -rf ./lib && npm run compile",
+    "preversion": "npm run test",
     "test": "mocha --compilers js:babel-core/register"
   },
   "repository": {
