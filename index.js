@@ -1,3 +1,4 @@
+import util from 'util';
 import colors, { fg, reset as colorEnd } from 'ansi-256-colors';
 
 const {
@@ -120,12 +121,10 @@ function printToConsole({
             }
 
             const message = messages.map(arg => {
-                if (arg instanceof Error) {
-                    return arg.stack;
-                }
-
                 if (arg instanceof Object) {
-                    return JSON.stringify(arg, null, 2).replace(/\\n/g, '\n');
+                    return util.inspect(arg, {
+                        depth: null
+                    });
                 }
 
                 return arg;
