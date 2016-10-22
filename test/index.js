@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from 'fs';
+import { resolve } from 'path';
 import { clone as unexpected } from 'unexpected';
 import sinon from 'sinon';
 import unexpectedSinon from 'unexpected-sinon';
@@ -6,6 +8,27 @@ import createLogger from '../src';
 
 const expect = (unexpected()
     .use(unexpectedSinon)
+);
+
+function reporter(context) {
+    context.output = '';
+
+    return line => {
+        context.output += line + '\n';
+    };
+}
+
+const fixtures = (readdirSync(resolve(__dirname, './fixtures'))
+    .reduce((fixtures, file) => {
+        const title = file.replace(/_/g, ' ').split('.log')[0];
+
+        fixtures[title] = readFileSync(
+            resolve(__dirname, `./fixtures/${file}`),
+            { encoding: 'utf-8' }
+        );
+
+        return fixtures;
+    }, {})
 );
 
 describe('createLogger', () => {
@@ -44,5 +67,42 @@ describe('createLogger', () => {
             // eslint-disable-next-line no-console
             console.log.restore();
         }
+    });
+});
+
+describe('logger', () => {
+    beforeEach(function () {
+        this.clock = sinon.useFakeTimers(+new Date('2000'));
+    });
+
+    afterEach(function () {
+        this.clock.restore();
+    });
+
+    describe('configured with defaults', () => {
+        before(function () {
+            this.logger = createLogger({
+                reporter: reporter(this)
+            });
+        });
+
+        after(function () {
+            delete this.logger;
+        });
+
+        it('should log a request and a response', async function () {
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.status = 200;
+            };
+
+            await this.logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[this.test.fullTitle()]);
+        });
     });
 });
