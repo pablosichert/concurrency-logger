@@ -100,6 +100,7 @@ function printToConsole({
     colorizer,
     getWidth,
     maxLocaleTimeLength,
+    reporter,
     slim,
     slot,
     slots
@@ -173,8 +174,7 @@ function printToConsole({
 
                 const $slots = _slots.join(slim ? '' : separator);
 
-                // eslint-disable-next-line no-console
-                console.log(join`
+                reporter(join`
                     ${$meta}
                     ${$slots}
                     ${formatLine(line)}
@@ -191,6 +191,8 @@ export default function createLogger(options = {}) {
         width,
         timestamp: showTimestamp = false,
         slim = false,
+        // eslint-disable-next-line no-console
+        reporter = console.log.bind(console),
         req = context => context.originalUrl,
         res = context => context.originalUrl
     } = options;
@@ -244,6 +246,7 @@ export default function createLogger(options = {}) {
         const printer = printToConsole({
             getWidth,
             maxLocaleTimeLength: () => maxLocaleTimeLength,
+            reporter,
             slim,
             slots,
             slot,
