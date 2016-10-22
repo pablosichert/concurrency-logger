@@ -221,5 +221,28 @@ describe('logger', () => {
 
             expect(this.output, 'to equal', fixtures[title]);
         });
+
+        it('should log an unhandled error and set status to 500', async function () {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                const error = new Error();
+                error.stack = 'Error\n    at stack';
+
+                throw error;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
     });
 });
