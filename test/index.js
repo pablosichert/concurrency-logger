@@ -279,5 +279,71 @@ describe('logger', () => {
 
             expect(this.output, 'to equal', fixtures[title]);
         });
+
+        it('should expose context.log method', async function() {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.log('Log!');
+
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
+
+        it('should expose context.log.info method', async function() {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.log.info('Info!');
+
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
+
+        it('should expose context.log.error method', async function() {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.log.error('Error!');
+
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
     });
 });

@@ -19,7 +19,20 @@ import createLogger from 'concurrency-logger';
 
 const logger = createLogger(/* options */);
 
+// Basic logger
 app.use(logger);
+
+// Log something in context to a specific request to trace it back easily,
+// even when there are multiple concurrent requests
+app.use(async (context, next) => {
+    context.log('Log!');
+    context.log.info('Info!');
+    context.log.error('Error!');
+
+    await next();
+});
+
+// ...
 ```
 
 ## API
