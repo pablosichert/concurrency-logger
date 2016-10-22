@@ -66,7 +66,8 @@ if (process.env.CREATE_FIXTURES) {
 } else {
     fixtures = (readdirSync(resolve(__dirname, fixturesDir))
         .reduce((fixtures, file) => {
-            const title = file.replace(/_/g, ' ').split('.log')[0];
+            let title = file.replace(/_/g, ' ');
+            title = title.substr(0, title.lastIndexOf('.'));
 
             fixtures[title] = readFileSync(
                 resolve(__dirname, `${fixturesDir}/${file}`),
