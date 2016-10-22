@@ -1,7 +1,7 @@
 {
   "name": "concurrency-logger",
   "version": "1.0.0",
-  "description": "Log HTTP requests/responses separately and visualize their concurrency",
+  "description": "Log HTTP requests/responses separately, visualize their concurrency and report logs/errors in context of a request",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
