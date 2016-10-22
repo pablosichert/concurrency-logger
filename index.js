@@ -121,6 +121,10 @@ function printToConsole({
             }
 
             const message = messages.map(arg => {
+                if (arg instanceof Function) {
+                    return String(arg);
+                }
+
                 if (arg instanceof Object) {
                     return util.inspect(arg, {
                         depth: null
