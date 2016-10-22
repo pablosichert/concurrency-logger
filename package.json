@@ -2,8 +2,9 @@
   "name": "concurrency-logger",
   "version": "1.0.0",
   "description": "Log HTTP requests/responses separately, visualize their concurrency and report logs/errors in context of a request",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "compile": "babel ./src --out-dir ./lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -27,6 +28,7 @@
   },
   "homepage": "https://github.com/PabloSichert/concurrency-logger#readme",
   "devDependencies": {
+    "babel-cli": "^6.16.0",
     "babel-eslint": "^7.0.0",
     "babel-plugin-transform-async-to-generator": "^6.16.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.16.0",
