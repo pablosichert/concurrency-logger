@@ -151,7 +151,7 @@ function printToConsole({
 
             if (width) {
                 messageWidth = (
-                    width - 4 - timeLength - 6 - slots.length * 2 - 1
+                    width - 4 - timeLength - 6 - slots.length * 2
                 );
             }
 
