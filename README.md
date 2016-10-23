@@ -5,6 +5,8 @@
 [![Dependency status][david-dm-image]][david-dm-url]
 [![Dev dependency status][david-dm-dev-image]][david-dm-dev-url]
 
+HTTP logging middleware especially useful to unwind concurrent operations without losing the request context
+
 ## Install
 ```bash
 $ npm install concurrency-logger
