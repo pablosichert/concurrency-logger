@@ -389,4 +389,56 @@ describe('logger', () => {
 
         expect(this.output, 'to equal', fixtures[title]);
     });
+
+    it('should show timestamp', async function() {
+        const title = this.test.fullTitle();
+        const createLogger = this.createLogger(title);
+
+        const logger = createLogger({
+            timestamp: true
+        });
+
+        const context = {
+            method: 'GET',
+            originalUrl: '/'
+        };
+
+        const next = () => {
+            context.status = 200;
+        };
+
+        await logger(context, next);
+
+        expect(this.output, 'to equal', fixtures[title]);
+    });
+
+    it('should expand when timestamp needs more space', async function() {
+        const title = this.test.fullTitle();
+        const createLogger = this.createLogger(title);
+
+        const logger = createLogger({
+            timestamp: true
+        });
+
+        const context = {
+            method: 'GET',
+            originalUrl: '/'
+        };
+
+        const next = () => {
+            context.status = 200;
+        };
+
+        await logger(context, next);
+
+        this.clock.tick(10 * 60 * 60 * 1000);
+
+        await logger(context, next);
+
+        this.clock.tick(14 * 60 * 60 * 1000);
+
+        await logger(context, next);
+
+        expect(this.output, 'to equal', fixtures[title]);
+    });
 });
