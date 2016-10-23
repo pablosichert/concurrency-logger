@@ -307,7 +307,7 @@ export default function createLogger(options = {}) {
 
             const print = printer({
                 char: i => i ? '│' : '┬',
-                meta: i => !i && `⟶   ${$time} ${$method}`
+                meta: i => !i && `──‣ ${$time} ${$method}`
             });
 
             print(req(context));
