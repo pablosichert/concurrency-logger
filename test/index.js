@@ -416,6 +416,8 @@ describe('logger', () => {
         const title = this.test.fullTitle();
         const createLogger = this.createLogger(title);
 
+        this.clock.tick(1 * 60 * 60 * 1000);
+
         const logger = createLogger({
             timestamp: true
         });
