@@ -5,7 +5,7 @@ import { clone as unexpected } from 'unexpected';
 import sinon from 'sinon';
 import unexpectedSinon from 'unexpected-sinon';
 
-import createLogger from '../src';
+import createLogger, { colorize } from '../src';
 
 const expect = (unexpected()
     .use(unexpectedSinon)
@@ -492,5 +492,13 @@ describe('logger', () => {
 
             expect(this.output, 'to equal', fixtures[title]);
         });
+    });
+});
+
+describe('colorize', () => {
+    it('returns an identity function if unknow color is provided', () => {
+        const string = 'foo';
+
+        expect(colorize('')(string), 'to be', string);
     });
 });

@@ -59,7 +59,7 @@ function breakLines(message, messageWidth, map) {
     }
 }
 
-function colorize(color = 0) {
+export function colorize(color = 0) {
     if (typeof color === 'number') {
         if (color <= 0) {
             return character => character;
