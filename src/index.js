@@ -293,9 +293,9 @@ export default function createLogger(options = {}) {
                 if ($time.length > maxLocaleTimeLength) {
                     maxLocaleTimeLength = $time.length;
                 } else if ($time.length < maxLocaleTimeLength) {
-                    $time += (
+                    $time = (
                         chars(SPACER, maxLocaleTimeLength - $time.length)
-                    );
+                    ) + $time;
                 }
             } else {
                 $time = chars(SPACER, maxLocaleTimeLength);
