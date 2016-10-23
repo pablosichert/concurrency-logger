@@ -201,14 +201,18 @@ export default function createLogger(options = {}) {
 
     let getWidth;
 
-    if (width !== undefined) {
-        if (typeof width === 'number') {
-            getWidth = () => width;
-        } else {
-            getWidth = () => false;
-        }
-    } else {
-        getWidth = () => process.stdout.columns;
+    switch (typeof width) {
+    case 'function':
+        getWidth = width;
+        break;
+    case 'number':
+        getWidth = () => width;
+        break;
+    case 'boolean':
+        getWidth = () => false;
+        break;
+    default:
+        getWidth = () => process.stdout.column;
     }
 
     const slots = new Array(minSlots).fill(null);

@@ -492,6 +492,30 @@ describe('logger', () => {
 
             expect(this.output, 'to equal', fixtures[title]);
         });
+
+        it('can be provided as function', async function() {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger({
+                width: () => 80
+            });
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.log(Array(50).join('log'));
+
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
     });
 });
 
