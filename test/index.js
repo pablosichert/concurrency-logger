@@ -346,5 +346,49 @@ describe('logger', () => {
 
             expect(this.output, 'to equal', fixtures[title]);
         });
+
+        it('should pretty print functions', async function() {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.log(Function);
+
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
+
+        it('should pretty print objects', async function() {
+            const title = this.test.fullTitle();
+            const createLogger = this.createLogger(title);
+
+            const logger = createLogger();
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                context.log({ foo: 123 });
+
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(this.output, 'to equal', fixtures[title]);
+        });
     });
 });
