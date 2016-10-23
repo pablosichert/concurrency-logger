@@ -11,11 +11,12 @@ $ npm install concurrency-logger
 ```
 
 ## Usage
-### With koa
+### With [koa](https://github.com/koajs/koa)
 ```js
+import Koa from 'koa';
 import createLogger from 'concurrency-logger';
 
-// ...
+const app = new Koa;
 
 const logger = createLogger(/* options */);
 
