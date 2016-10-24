@@ -26,12 +26,50 @@ log('&nbsp;');
 log('Waiting for requests.');
 log('&nbsp;');
 
+let last = 0;
+let scrollFrame;
+
+const scroll = now => {
+    const {
+        scrollTop,
+        scrollHeight
+    } = $terminal;
+
+    const {
+        height
+    } = $terminal.getBoundingClientRect();
+
+    const abs = scrollHeight - (scrollTop + height);
+
+    if (abs < 1) {
+        $terminal.scrollTop = scrollHeight;
+
+        return;
+    }
+
+    const factor = (now - last) / 100;
+    let add = factor * abs;
+
+    if (add < 1) {
+        add = 1;
+    }
+
+    $terminal.scrollTop += add;
+
+    last = now;
+
+    scrollFrame = requestAnimationFrame(scroll);
+};
+
+scrollFrame = requestAnimationFrame(scroll);
+
 const logger = createLogger({
     width: 80,
     reporter: line => {
         log(toHtml(line.replace(/\s/g, '&nbsp;')));
 
-        $terminal.scrollTop = $terminal.scrollHeight;
+        cancelAnimationFrame(scrollFrame);
+        scrollFrame = requestAnimationFrame(scroll);
     }
 });
 
