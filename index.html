@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=750" />
+        <meta name="description" content="Log HTTP requests/responses separately, visualize their concurrency and report logs/errors in context of a request" />
+        <title>concurrency-logger</title>
+        <link href="dist/style.css" rel="stylesheet" />
+        <script src="dist/bundle.js" defer></script>
+    </head>
+    <body>
+        <div id="terminal-padding">
+            <div id="terminal-wrap">
+                <header>
+                    <span class="close"></span>
+                    <span class="minimize"></span>
+                    <span class="expand"></span>
+                    <h1>Logger for Concurrent HTTP Requests</h1>
+                </header>
+                <div id="terminal"></div>
+            </div>
+        </div>
+        <div id="toolbar">
+            <div class="inner">
+                <button id="redirect">Getting a redirect</button>
+                <button id="not-found">Non-existing resource</button>
+                <button id="error">Request with error</button>
+                <button id="long">Long request</button>
+                <div class="horizontal">
+                    <input id="method" placeholder="method" value="GET" />
+                    <input id="status" placeholder="status" value="200" />
+                    <input id="ms" placeholder="ms" value="50" />
+                </div>
+                <input id="url" placeholder="url" value="/debug" />
+                <button id="custom">Custom request</button>
+            </div>
+            <a id="github" href="https://github.com/PabloSichert/concurrency-logger">
+                <img id="logo" src="dist/GitHub.png" />
+            </a>
+        </div>
+        <div id="requests"></div>
+    </body>
+</html>

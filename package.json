@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "compile": "babel-node ./scripts/compile.js"
+  },
+  "devDependencies": {
+    "ansi-to-html": "^0.4.2",
+    "babel-cli": "^6.16.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.1"
+  }
+}

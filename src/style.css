@@ -1,0 +1,174 @@
+body {
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    background: radial-gradient(at 25%, #FFFFFF, rgba(255,255,255,.75) 50%, rgba(255,255,255,0)), radial-gradient(at 75%, #FFFFFF, rgba(255,255,255,.75) 50%, rgba(255,255,255,0));
+    background-color: #CCCCCC;
+    font-family: sans-serif;
+}
+
+* {
+    outline: none;
+    box-sizing: border-box;
+}
+
+@media (min-width: 800px) {
+    body {
+        flex-flow: row;
+    }
+}
+
+button {
+    padding: 1em 2em;
+    border: none;
+    margin: 0 0 1rem 0;
+    background: #00A0FF;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+#terminal-padding {
+    margin: auto;
+    padding: 2rem;
+}
+
+#terminal-wrap {
+    color: #839496;
+    background: #002B36;
+    box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
+}
+
+#terminal-wrap header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+
+#terminal-wrap header span {
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin-left: 7.5px;
+    border-radius: 100%;
+    background: #808080;
+    opacity: 0.75;
+}
+
+#terminal-wrap header .close {
+    background: #FF0000;
+}
+
+#terminal-wrap header h1 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    font-weight: normal;
+    font-size: 0.75rem;
+}
+
+#terminal {
+    height: calc(36 * 1em);
+    width: calc(8.5px * 80);
+    padding: 0.5em;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1rem;
+    overflow-y: scroll;
+    white-space: nowrap;
+}
+
+#terminal::-webkit-scrollbar {
+  display: none;
+}
+
+#toolbar {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    padding: 2rem;
+    background: #002B36;
+}
+
+@media (min-width: 800px) {
+    #toolbar {
+        flex: 0 1 auto;
+    }
+}
+
+#toolbar > .inner {
+    display: flex;
+    flex-flow: column;
+    margin: auto 0;
+}
+
+#requests {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#requests > div {
+    display: flex;
+    flex-flow: column;
+    padding: 0 1rem;
+}
+
+#requests > div > span {
+    padding: 1em 2em;
+    background: #002B36;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 0.75rem;
+}
+
+#requests > div > div {
+    display: flex;
+}
+
+#requests > div > div > button {
+    flex: 1 1 auto;
+}
+
+#requests > div > div > button:last-child {
+    background: #BF0A0D;
+}
+
+input {
+    padding: 0.5em;
+    border: none;
+    font-family: inherit;
+}
+
+.horizontal {
+    display: flex;
+}
+
+.horizontal input {
+    flex: 1 1 auto;
+    width: 4em;
+    text-align: center;
+    box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.33);
+}
+
+#github {
+    text-align: center;
+}
+
+#logo {
+    width: 45px;
+    height: auto;
+}
