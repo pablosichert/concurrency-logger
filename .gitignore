@@ -2,3 +2,4 @@ node_modules
 *.log
 !test/fixtures/*.log
 lib
+demo
