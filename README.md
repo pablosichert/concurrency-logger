@@ -46,7 +46,7 @@ app.use(async (context, next) => {
 | width | integer, boolean(`false`) | `undefined` | If no width is provided, it will be dynamically read from `process.stdout.columns`. Pass in an integer to break all lines according to the specified fixed (terminal character) width. Pass in `false` if you want the lines not to break at all. | `80`, `132`, `false`
 | timestamp | boolean | `false` | Print localized timestamp for every requests. | `true`, `false`
 | slim | boolean | `false` | "Slim mode": don't use an extra character between request lanes to shrink width, but make them harder to separate visually. | `true`, `false`
-| reporter | function(line: string) | `console.log.bind(console)` | Specify a function that handles the output lines. Write to terminal or stream to a log file, for example. Note that the log contains ANSI color codes, so you might need a program that can read those. E.g. `less -r requests.log` | `line => logStream.write(line + '\n')`
+| reporter | writable stream | `process.stdout` | Specify a stream that handles the output lines. Write to terminal or stream to a log file, for example. Note that the lines contain ANSI color codes, so when streaming to a file you might need a program that can read those. E.g. `less -r requests.log` | `require('fs').createWriteStream('logs/requests.log')`
 | req | any: function(context: object) | `context => context.originalUrl` | Attach additional information to the request log line. | `context => context.originalUrl + '\n' + context.get('User-Agent')`
 | res | any: function(context: object) | `context => context.originalUrl` | Attach additional information to the response log line. | `context => context.originalUrl + '\n' + context.get('User-Agent')`
 

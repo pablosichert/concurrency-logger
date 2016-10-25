@@ -176,7 +176,7 @@ function printToConsole({
 
                 const $slots = _slots.join(slim ? '' : separator);
 
-                reporter(join`
+                reporter.write(join`
                     ${$meta}
                     ${$slots}
                     ${formatLine(line)}
@@ -193,8 +193,7 @@ export default function createLogger(options = {}) {
         width,
         timestamp: showTimestamp = false,
         slim = false,
-        // eslint-disable-next-line no-console
-        reporter = console.log.bind(console),
+        reporter = process.stdout,
         req = context => context.originalUrl,
         res = context => context.originalUrl
     } = options;
