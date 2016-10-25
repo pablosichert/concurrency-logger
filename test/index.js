@@ -24,23 +24,17 @@ function createReporter(context, testTitle) {
     if (process.env.CREATE_FIXTURES) {
         const title = testTitle.replace(/\s/g, '_');
         const fileName = `${title}.log`;
-        const log = createWriteStream(
-            resolve(__dirname, `${fixturesDir}/${fileName}`)
-        );
 
         print(fg.getRgb(0, 5, 0) + '+' + colorEnd, fileName);
 
-        reporter = new Writable({
-            write(chunk, encoding, next) {
-                log.write(chunk.toString() + '\n');
-                next();
-            }
-        });
+        reporter = createWriteStream(
+            resolve(__dirname, `${fixturesDir}/${fileName}`)
+        );
     } else {
         context.output = '';
         reporter = new Writable({
             write(chunk, encoding, next) {
-                context.output += chunk.toString() + '\n';
+                context.output += chunk.toString();
                 next();
             }
         });

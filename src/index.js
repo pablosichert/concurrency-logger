@@ -176,11 +176,13 @@ function printToConsole({
 
                 const $slots = _slots.join(slim ? '' : separator);
 
-                reporter.write(join`
+                const formattedLine = join`
                     ${$meta}
                     ${$slots}
                     ${formatLine(line)}
-                `);
+                `;
+
+                reporter.write(formattedLine + '\n');
             });
         };
     };
