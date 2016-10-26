@@ -56,6 +56,16 @@ Install development dependencies
 npm install
 ```
 
+Create new fixtures to test against
+```
+npm run create-fixtures
+```
+
+Manually review fixtures (you need a program that renders ANSI escape codes)
+```
+less -r test/fixtures/*
+```
+
 Run tests
 ```
 npm test
