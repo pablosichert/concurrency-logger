@@ -8,7 +8,7 @@
 HTTP logging middleware especially useful to unwind concurrent operations without losing the request context
 
 ## Install
-```bash
+```
 $ npm install concurrency-logger
 ```
 
@@ -53,32 +53,32 @@ app.use(async (context, next) => {
 ## Developing
 Install development dependencies
 ```
-npm install
+$ npm install
 ```
 
 Create new fixtures to test against
 ```
-npm run create-fixtures
+$ npm run create-fixtures
 ```
 
 Manually review fixtures (you need a program that renders ANSI escape codes)
 ```
-less -r test/fixtures/*
+$ less -r test/fixtures/*
 ```
 
 Run tests
 ```
-npm test
+$ npm test
 ```
 
 Run code linter
 ```
-npm run lint
+$ npm run lint
 ```
 
 Compile to ES5 from /src to /lib
 ```
-npm run compile
+$ npm run compile
 ```
 
 [npm-url]: https://npmjs.org/package/concurrency-logger
