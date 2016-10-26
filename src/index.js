@@ -313,11 +313,14 @@ export default function createLogger(options = {}) {
             print(req(context));
         }
 
+        let exception;
+
         try {
             await next();
         } catch(error) {
-            context.status = 500;
             log.error(error);
+
+            exception = error;
         }
 
         const end = new Date;
@@ -353,7 +356,9 @@ export default function createLogger(options = {}) {
 
         let $status;
 
-        if (status >= 100 && status < 200) {
+        if (exception) {
+            $status = colorize('fatal')('ERR');
+        } else if (status >= 100 && status < 200) {
             $status = colorize('info')(status);
         } else if (status < 300) {
             $status = status;
@@ -377,5 +382,9 @@ export default function createLogger(options = {}) {
         }
 
         slots[slot] = null;
+
+        if (exception) {
+            throw exception;
+        }
     };
 }
