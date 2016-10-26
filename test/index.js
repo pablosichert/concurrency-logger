@@ -152,6 +152,27 @@ describe('logger', () => {
         expect(this.output, 'to equal', fixtures[title]);
     });
 
+    it('should pass on errors', async function () {
+        const title = this.test.fullTitle();
+        const createLogger = this.createLogger(title);
+
+        const logger = createLogger();
+
+        const context = {
+            method: 'GET',
+            originalUrl: '/'
+        };
+
+        const error = new Error();
+        error.stack = 'Error\n    at stack';
+
+        const next = () => {
+            throw error;
+        };
+
+        await expect(logger(context, next), 'to be rejected with', error);
+    });
+
     describe('status codes', () => {
         const types = {
             '1xx (Informational)': [
@@ -268,14 +289,18 @@ describe('logger', () => {
             originalUrl: '/'
         };
 
-        const error = new Error();
-        error.stack = 'Error\n    at stack';
-
         const next = () => {
+            const error = new Error();
+            error.stack = 'Error\n    at stack';
+
             throw error;
         };
 
-        await expect(logger(context, next), 'to be rejected with', error);
+        try {
+            await logger(context, next);
+        } catch (error) {
+            // Not interested in this one
+        }
 
         expect(this.output, 'to equal', fixtures[title]);
     });
