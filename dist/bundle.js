@@ -1509,13 +1509,12 @@ const logger = (0, _src2.default)({
     }
 });
 
-const time = {
-    tick: () => {}
-};
+const clock = (0, _sinon.useFakeTimers)(+new Date(), 'Date');
+const timeFactor = 0.01;
 
 setInterval(() => {
-    time.tick();
-}, 100);
+    clock.tick(1);
+}, 1 / timeFactor);
 
 setInterval(() => {
     const context = {
@@ -1526,7 +1525,7 @@ setInterval(() => {
     const next = (() => {
         var _ref = _asyncToGenerator(function* () {
             yield new Promise(function (resolve) {
-                return setTimeout(resolve, Math.random() * 105);
+                return setTimeout(resolve, Math.random() * 105 / timeFactor);
             });
             context.status = 200;
         });
@@ -1539,10 +1538,6 @@ setInterval(() => {
     logger(context, next);
 }, 1000);
 
-const clock = (0, _sinon.useFakeTimers)(+new Date());
-
-time.tick = () => clock.tick(1);
-
 $('#redirect').addEventListener('click', () => {
     const context = {
         method: 'GET',
@@ -1553,7 +1548,7 @@ $('#redirect').addEventListener('click', () => {
         var _ref2 = _asyncToGenerator(function* () {
             context.log('\nWill get a redirect\n\n');
             yield new Promise(function (resolve) {
-                return setTimeout(resolve, 10);
+                return setTimeout(resolve, 10 / timeFactor);
             });
             context.status = 301;
         });
@@ -1576,7 +1571,7 @@ $('#not-found').addEventListener('click', () => {
         var _ref3 = _asyncToGenerator(function* () {
             context.log('\nThe resource will not be found\n\n');
             yield new Promise(function (resolve) {
-                return setTimeout(resolve, 10);
+                return setTimeout(resolve, 10 / timeFactor);
             });
             context.status = 404;
         });
@@ -1599,7 +1594,7 @@ $('#error').addEventListener('click', _asyncToGenerator(function* () {
         var _ref5 = _asyncToGenerator(function* () {
             context.log('\nThis one will throw an error\n\n');
             yield new Promise(function (resolve) {
-                return setTimeout(resolve, 25);
+                return setTimeout(resolve, 25 / timeFactor);
             });
             const error = new Error();
             throw error.stack;
@@ -1627,7 +1622,7 @@ $('#long').addEventListener('click', () => {
         var _ref6 = _asyncToGenerator(function* () {
             context.log('\nThis is going to be a long request\n\n');
             yield new Promise(function (resolve) {
-                return setTimeout(resolve, 350);
+                return setTimeout(resolve, 350 / timeFactor);
             });
             context.status = 200;
         });
@@ -1693,7 +1688,7 @@ $('#custom').addEventListener('click', _asyncToGenerator(function* () {
 
             try {
                 yield new Promise(function (resolve, _reject) {
-                    const timeout = setTimeout(resolve, ms);
+                    const timeout = setTimeout(resolve, ms / timeFactor);
                     reject = function (...args) {
                         clearTimeout(timeout);
                         _reject(...args);

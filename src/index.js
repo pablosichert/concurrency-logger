@@ -75,13 +75,12 @@ const logger = createLogger({
     }
 });
 
-const time = {
-    tick: () => {}
-};
+const clock = useFakeTimers(+new Date, 'Date');
+const timeFactor = 0.01;
 
 setInterval(() => {
-    time.tick();
-}, 100);
+    clock.tick(1);
+}, 1 / timeFactor);
 
 setInterval(() => {
     const context = {
@@ -90,16 +89,14 @@ setInterval(() => {
     };
 
     const next = async () => {
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 105));
+        await new Promise(resolve =>
+            setTimeout(resolve, Math.random() * 105 / timeFactor)
+        );
         context.status = 200;
     };
 
     logger(context, next);
 }, 1000);
-
-const clock = useFakeTimers(+new Date);
-
-time.tick = () => clock.tick(1);
 
 $('#redirect').addEventListener('click', () => {
     const context = {
@@ -109,7 +106,7 @@ $('#redirect').addEventListener('click', () => {
 
     const next = async () => {
         context.log('\nWill get a redirect\n\n');
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10 / timeFactor));
         context.status = 301;
     };
 
@@ -124,7 +121,7 @@ $('#not-found').addEventListener('click', () => {
 
     const next = async () => {
         context.log('\nThe resource will not be found\n\n');
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10 / timeFactor));
         context.status = 404;
     };
 
@@ -139,7 +136,7 @@ $('#error').addEventListener('click', async () => {
 
     const next = async () => {
         context.log('\nThis one will throw an error\n\n');
-        await new Promise(resolve => setTimeout(resolve, 25));
+        await new Promise(resolve => setTimeout(resolve, 25 / timeFactor));
         const error = new Error;
         throw error.stack;
     };
@@ -159,7 +156,7 @@ $('#long').addEventListener('click', () => {
 
     const next = async () => {
         context.log('\nThis is going to be a long request\n\n');
-        await new Promise(resolve => setTimeout(resolve, 350));
+        await new Promise(resolve => setTimeout(resolve, 350 / timeFactor));
         context.status = 200;
     };
 
@@ -220,7 +217,7 @@ $('#custom').addEventListener('click', async () => {
 
         try {
             await new Promise((resolve, _reject) => {
-                const timeout = setTimeout(resolve, ms);
+                const timeout = setTimeout(resolve, ms / timeFactor);
                 reject = (...args) => {
                     clearTimeout(timeout);
                     _reject(...args);
