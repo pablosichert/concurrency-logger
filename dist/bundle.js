@@ -1499,11 +1499,13 @@ scrollFrame = requestAnimationFrame(scroll);
 
 const logger = (0, _src2.default)({
     width: 80,
-    reporter: line => {
-        log(toHtml(line.replace(/\s/g, '&nbsp;')));
+    reporter: {
+        write: line => {
+            log(toHtml(line.replace(/\s/g, '&nbsp;')));
 
-        cancelAnimationFrame(scrollFrame);
-        scrollFrame = requestAnimationFrame(scroll);
+            cancelAnimationFrame(scrollFrame);
+            scrollFrame = requestAnimationFrame(scroll);
+        }
     }
 });
 
@@ -1587,14 +1589,14 @@ $('#not-found').addEventListener('click', () => {
     logger(context, next);
 });
 
-$('#error').addEventListener('click', () => {
+$('#error').addEventListener('click', _asyncToGenerator(function* () {
     const context = {
         method: 'GET',
         originalUrl: '/faulty'
     };
 
     const next = (() => {
-        var _ref4 = _asyncToGenerator(function* () {
+        var _ref5 = _asyncToGenerator(function* () {
             context.log('\nThis one will throw an error\n\n');
             yield new Promise(function (resolve) {
                 return setTimeout(resolve, 25);
@@ -1604,12 +1606,16 @@ $('#error').addEventListener('click', () => {
         });
 
         return function next() {
-            return _ref4.apply(this, arguments);
+            return _ref5.apply(this, arguments);
         };
     })();
 
-    logger(context, next);
-});
+    try {
+        yield logger(context, next);
+    } catch (error) {
+        // Not handling that one
+    }
+}));
 
 $('#long').addEventListener('click', () => {
     const context = {
@@ -1618,7 +1624,7 @@ $('#long').addEventListener('click', () => {
     };
 
     const next = (() => {
-        var _ref5 = _asyncToGenerator(function* () {
+        var _ref6 = _asyncToGenerator(function* () {
             context.log('\nThis is going to be a long request\n\n');
             yield new Promise(function (resolve) {
                 return setTimeout(resolve, 350);
@@ -1627,7 +1633,7 @@ $('#long').addEventListener('click', () => {
         });
 
         return function next() {
-            return _ref5.apply(this, arguments);
+            return _ref6.apply(this, arguments);
         };
     })();
 
@@ -1640,7 +1646,7 @@ const $originalUrl = $('#url');
 const $status = $('#status');
 const $ms = $('#ms');
 
-$('#custom').addEventListener('click', () => {
+$('#custom').addEventListener('click', _asyncToGenerator(function* () {
     const method = $method.value;
     const originalUrl = $originalUrl.value;
     const status = $status.value;
@@ -1652,7 +1658,7 @@ $('#custom').addEventListener('click', () => {
     };
 
     const next = (() => {
-        var _ref6 = _asyncToGenerator(function* () {
+        var _ref8 = _asyncToGenerator(function* () {
             const div = document.createElement('div');
 
             div.innerHTML = `<span>${ method } ${ originalUrl } ${ status } ${ ms }ms</span>`;
@@ -1701,12 +1707,16 @@ $('#custom').addEventListener('click', () => {
         });
 
         return function next() {
-            return _ref6.apply(this, arguments);
+            return _ref8.apply(this, arguments);
         };
     })();
 
-    logger(context, next);
-});
+    try {
+        yield logger(context, next);
+    } catch (error) {
+        // User triggered error!
+    }
+}));
 
 },{"../../src":44,"ansi-to-html":1,"sinon":19}],15:[function(require,module,exports){
 (function () {
@@ -8394,11 +8404,13 @@ function printToConsole({
 
                 const $slots = _slots.join(slim ? '' : separator);
 
-                reporter(join`
+                const formattedLine = join`
                     ${ $meta }
                     ${ $slots }
                     ${ formatLine(line) }
-                `);
+                `;
+
+                reporter.write(formattedLine + '\n');
             });
         };
     };
@@ -8411,8 +8423,7 @@ function createLogger(options = {}) {
         width,
         timestamp: showTimestamp = false,
         slim = false,
-        // eslint-disable-next-line no-console
-        reporter = console.log.bind(console),
+        reporter = process.stdout,
         req = context => context.originalUrl,
         res = context => context.originalUrl
     } = options;
@@ -8542,11 +8553,14 @@ function createLogger(options = {}) {
                 print(req(context));
             }
 
+            let exception;
+
             try {
                 yield next();
             } catch (error) {
-                context.status = 500;
                 log.error(error);
+
+                exception = error;
             }
 
             const end = new Date();
@@ -8580,7 +8594,9 @@ function createLogger(options = {}) {
 
             let $status;
 
-            if (status >= 100 && status < 200) {
+            if (exception) {
+                $status = colorize('fatal')('ERR');
+            } else if (status >= 100 && status < 200) {
                 $status = colorize('info')(status);
             } else if (status < 300) {
                 $status = status;
@@ -8606,6 +8622,10 @@ function createLogger(options = {}) {
             }
 
             slots[slot] = null;
+
+            if (exception) {
+                throw exception;
+            }
         });
 
         function logger(_x, _x2) {

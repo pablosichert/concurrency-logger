@@ -65,11 +65,13 @@ scrollFrame = requestAnimationFrame(scroll);
 
 const logger = createLogger({
     width: 80,
-    reporter: line => {
-        log(toHtml(line.replace(/\s/g, '&nbsp;')));
+    reporter: {
+        write: line => {
+            log(toHtml(line.replace(/\s/g, '&nbsp;')));
 
-        cancelAnimationFrame(scrollFrame);
-        scrollFrame = requestAnimationFrame(scroll);
+            cancelAnimationFrame(scrollFrame);
+            scrollFrame = requestAnimationFrame(scroll);
+        }
     }
 });
 
@@ -129,7 +131,7 @@ $('#not-found').addEventListener('click', () => {
     logger(context, next);
 });
 
-$('#error').addEventListener('click', () => {
+$('#error').addEventListener('click', async () => {
     const context = {
         method: 'GET',
         originalUrl: '/faulty'
@@ -142,7 +144,11 @@ $('#error').addEventListener('click', () => {
         throw error.stack;
     };
 
-    logger(context, next);
+    try {
+        await logger(context, next);
+    } catch (error) {
+        // Not handling that one
+    }
 });
 
 $('#long').addEventListener('click', () => {
@@ -166,7 +172,7 @@ const $originalUrl = $('#url');
 const $status = $('#status');
 const $ms = $('#ms');
 
-$('#custom').addEventListener('click', () => {
+$('#custom').addEventListener('click', async () => {
     const method = $method.value;
     const originalUrl = $originalUrl.value;
     const status = $status.value;
@@ -227,5 +233,9 @@ $('#custom').addEventListener('click', () => {
         }
     };
 
-    logger(context, next);
+    try {
+        await logger(context, next);
+    } catch (error) {
+       // User triggered error!
+    }
 });
