@@ -176,11 +176,13 @@ function printToConsole({
 
                 const $slots = _slots.join(slim ? '' : separator);
 
-                reporter(join`
+                const formattedLine = join`
                     ${$meta}
                     ${$slots}
                     ${formatLine(line)}
-                `);
+                `;
+
+                reporter.write(formattedLine + '\n');
             });
         };
     };
@@ -193,8 +195,7 @@ export default function createLogger(options = {}) {
         width,
         timestamp: showTimestamp = false,
         slim = false,
-        // eslint-disable-next-line no-console
-        reporter = console.log.bind(console),
+        reporter = process.stdout,
         req = context => context.originalUrl,
         res = context => context.originalUrl
     } = options;

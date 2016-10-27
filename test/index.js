@@ -4,6 +4,7 @@ import { fg, reset as colorEnd } from 'ansi-256-colors';
 import { clone as unexpected } from 'unexpected';
 import sinon from 'sinon';
 import unexpectedSinon from 'unexpected-sinon';
+import { Writable } from 'stream';
 
 import createLogger, { colorize } from '../src';
 
@@ -17,33 +18,26 @@ Object.defineProperty(process.stdout, 'columns', {
 
 const fixturesDir = 'fixtures';
 
-function reporter(testTitle) {
+function createReporter(context, testTitle) {
     let reporter;
 
     if (process.env.CREATE_FIXTURES) {
-        let log;
+        const title = testTitle.replace(/\s/g, '_');
+        const fileName = `${title}.log`;
 
-        reporter = line => {
-            if (!log) {
-                const title = testTitle.replace(/\s/g, '_');
+        print(fg.getRgb(0, 5, 0) + '+' + colorEnd, fileName);
 
-                const fileName = `${title}.log`;
-
-                print(fg.getRgb(0, 5, 0) + '+' + colorEnd, fileName);
-
-                log = createWriteStream(
-                    resolve(__dirname, `${fixturesDir}/${fileName}`)
-                );
-            }
-
-            log.write(line + '\n');
-        };
+        reporter = createWriteStream(
+            resolve(__dirname, `${fixturesDir}/${fileName}`)
+        );
     } else {
-        this.output = '';
-
-        reporter = line => {
-            this.output += line + '\n';
-        };
+        context.output = '';
+        reporter = new Writable({
+            write(chunk, encoding, next) {
+                context.output += chunk.toString();
+                next();
+            }
+        });
     }
 
     return reporter;
@@ -81,7 +75,7 @@ if (process.env.CREATE_FIXTURES) {
 
 describe('createLogger', () => {
     it('should create a koa compatible middleware', async () => {
-        sinon.stub(console, 'log', () => {});
+        sinon.stub(process.stdout, 'write', () => {});
 
         try {
             const logger = createLogger();
@@ -102,8 +96,7 @@ describe('createLogger', () => {
         } catch (error) {
             throw error;
         } finally {
-            // eslint-disable-next-line no-console
-            console.log.restore();
+            process.stdout.write.restore();
         }
     });
 });
@@ -113,7 +106,7 @@ describe('logger', () => {
         this.createLogger = title => opts => {
             const logger = createLogger({
                 ...opts,
-                reporter: reporter.bind(this)(title)
+                reporter: createReporter(this, title)
             });
 
             return logger;
