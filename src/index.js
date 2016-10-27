@@ -67,10 +67,12 @@ const logger = createLogger({
     width: 80,
     reporter: {
         write: line => {
-            log(toHtml(line.replace(/\s/g, '&nbsp;')));
+            requestAnimationFrame(() => {
+                log(toHtml(line.replace(/\s/g, '&nbsp;')));
 
-            cancelAnimationFrame(scrollFrame);
-            scrollFrame = requestAnimationFrame(scroll);
+                cancelAnimationFrame(scrollFrame);
+                scrollFrame = requestAnimationFrame(scroll);
+            });
         }
     }
 });
