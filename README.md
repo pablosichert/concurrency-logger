@@ -81,6 +81,19 @@ Compile to ES5 from /src to /lib
 $ npm run compile
 ```
 
+Initialize demo project
+```
+$ git clone git@github.com:PabloSichert/concurrency-logger demo
+$ cd demo
+demo $ git checkout gh-pages
+demo $ npm install
+```
+
+Build demo
+```
+demo $ npm run compile
+```
+
 [npm-url]: https://npmjs.org/package/concurrency-logger
 [npm-image]: https://badge.fury.io/js/concurrency-logger.svg
 [travis-url]: https://travis-ci.org/PabloSichert/concurrency-logger
