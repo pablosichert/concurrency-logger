@@ -15,7 +15,7 @@ body {
     box-sizing: border-box;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
     body {
         flex-flow: row;
     }
@@ -29,6 +29,7 @@ button {
     color: #FFFFFF;
     cursor: pointer;
     font-family: inherit;
+    font-size: inherit;
 }
 
 #terminal-outer {
@@ -119,11 +120,13 @@ button {
     flex-flow: column;
     padding: 2rem;
     background: #002B36;
+    font-size: 4vw;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 1000px) {
     #toolbar {
-        flex: 0 1 auto;
+        flex: 0 1 250px;
+        font-size: 13px;
     }
 }
 
@@ -153,7 +156,7 @@ button {
     background: #002B36;
     color: #FFFFFF;
     text-align: center;
-    font-size: 0.75rem;
+    font-size: 0.75em;
 }
 
 #requests > div > div {
@@ -172,6 +175,7 @@ input {
     padding: 0.5em;
     border: none;
     font-family: inherit;
+    font-size: inherit;
 }
 
 .horizontal {
@@ -192,4 +196,5 @@ input {
 #logo {
     width: 45px;
     height: auto;
+    margin-top: 1em;
 }
