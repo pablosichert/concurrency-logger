@@ -1,3 +1,8 @@
+@font-face {
+    font-family: DejaVu Sans Mono;
+    src: url(./DejaVuSansMono.ttf);
+}
+
 body {
     display: flex;
     flex-flow: column;
@@ -34,7 +39,7 @@ button {
 
 #terminal-outer {
     margin: auto;
-    padding: 2rem 27px;
+    padding: 2rem 31px;
 }
 
 #terminal-wrap {
@@ -81,14 +86,14 @@ button {
 #terminal-padding {
     position: relative;
     padding: 0.5em;
+    font-family: DejaVu Sans Mono, monospace;
+    font-size: 14px;
+    line-height: 16px;
 }
 
 #terminal {
-    height: calc(36 * 1em);
-    width: calc(8.5px * 80);
-    font-family: monospace;
-    font-size: 14px;
-    line-height: 1rem;
+    height: calc(32 * 16px);
+    width: calc(8.42px * 80);
     overflow-y: scroll;
     white-space: nowrap;
 }
