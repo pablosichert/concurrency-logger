@@ -41,12 +41,6 @@ const scroll = now => {
 
     const abs = scrollHeight - (scrollTop + height);
 
-    if (abs < 1) {
-        $terminal.scrollTop = scrollHeight;
-
-        return;
-    }
-
     const factor = (now - last) / 100;
     let add = factor * abs;
 
@@ -54,7 +48,7 @@ const scroll = now => {
         add = 1;
     }
 
-    $terminal.scrollTop += add;
+    $terminal.scrollTop = scrollTop + add;
 
     last = now;
 
@@ -69,9 +63,6 @@ const logger = createLogger({
         write: line => {
             requestAnimationFrame(() => {
                 log(toHtml(line.replace(/\s/g, '&nbsp;')));
-
-                cancelAnimationFrame(scrollFrame);
-                scrollFrame = requestAnimationFrame(scroll);
             });
         }
     }
