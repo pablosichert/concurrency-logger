@@ -1462,6 +1462,7 @@ log('&nbsp;');
 
 let last = 0;
 let scrollFrame;
+let autoScroll = true;
 
 const scroll = now => {
     const {
@@ -1483,10 +1484,47 @@ const scroll = now => {
 
     last = now;
 
-    scrollFrame = requestAnimationFrame(scroll);
+    if (autoScroll) {
+        scrollFrame = requestAnimationFrame(scroll);
+    }
 };
 
 scrollFrame = requestAnimationFrame(scroll);
+
+const $scroll = $('#scroll');
+
+const resumeScroll = () => {
+    autoScroll = true;
+    last = performance.now();
+    scrollFrame = requestAnimationFrame(scroll);
+    $scroll.className = '';
+};
+
+$scroll.addEventListener('click', resumeScroll);
+
+let lastScrollTop = 0;
+
+$terminal.addEventListener('scroll', event => {
+    const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+    } = event.target;
+
+    if (scrollTop < lastScrollTop) {
+        if (autoScroll) {
+            autoScroll = false;
+            cancelAnimationFrame(scrollFrame);
+            $scroll.className = 'active';
+        }
+    } else if (scrollHeight - scrollTop - clientHeight < 100) {
+        if (!autoScroll) {
+            resumeScroll();
+        }
+    }
+
+    lastScrollTop = scrollTop;
+});
 
 const logger = (0, _src2.default)({
     width: 80,
