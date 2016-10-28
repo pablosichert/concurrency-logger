@@ -31,7 +31,7 @@ button {
     font-family: inherit;
 }
 
-#terminal-padding {
+#terminal-outer {
     margin: auto;
     padding: 2rem;
 }
@@ -77,10 +77,13 @@ button {
     font-size: 0.75rem;
 }
 
+#terminal-padding {
+    padding: 0.5em;
+}
+
 #terminal {
     height: calc(36 * 1em);
     width: calc(8.5px * 80);
-    padding: 0.5em;
     font-family: monospace;
     font-size: 14px;
     line-height: 1rem;

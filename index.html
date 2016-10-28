@@ -9,7 +9,7 @@
         <script src="dist/bundle.js" defer></script>
     </head>
     <body>
-        <div id="terminal-padding">
+        <div id="terminal-outer">
             <div id="terminal-wrap">
                 <header>
                     <span class="close"></span>
@@ -17,7 +17,9 @@
                     <span class="expand"></span>
                     <h1>Logger for Concurrent HTTP Requests</h1>
                 </header>
-                <div id="terminal"></div>
+                <div id="terminal-padding">
+                    <div id="terminal"></div>
+                </div>
             </div>
         </div>
         <div id="toolbar">

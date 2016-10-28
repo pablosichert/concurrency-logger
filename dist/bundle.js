@@ -1466,14 +1466,11 @@ let scrollFrame;
 const scroll = now => {
     const {
         scrollTop,
-        scrollHeight
+        scrollHeight,
+        clientHeight
     } = $terminal;
 
-    const {
-        height
-    } = $terminal.getBoundingClientRect();
-
-    const abs = scrollHeight - (scrollTop + height);
+    const abs = scrollHeight - (scrollTop + clientHeight);
 
     const factor = (now - last) / 100;
     let add = factor * abs;
