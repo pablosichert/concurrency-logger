@@ -2,8 +2,10 @@ import createLogger from '../../src';
 import Convert from 'ansi-to-html';
 import { useFakeTimers } from 'sinon';
 import performancePolyfill from './polyfills/performance.js';
+import matchesPolyfill from './polyfills/matches.js';
 
 performancePolyfill(window, Date);
+matchesPolyfill(Element);
 
 function $(selector) {
     return document.querySelector(selector);
