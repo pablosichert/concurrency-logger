@@ -1,6 +1,9 @@
 import createLogger from '../../src';
 import Convert from 'ansi-to-html';
 import { useFakeTimers } from 'sinon';
+import performancePolyfill from './polyfills/performance.js';
+
+performancePolyfill(window, Date);
 
 function $(selector) {
     return document.querySelector(selector);
@@ -26,7 +29,7 @@ log('&nbsp;');
 log('Waiting for requests.');
 log('&nbsp;');
 
-let last = 0;
+let last = performance.now();
 let scrollFrame;
 let autoScroll = true;
 
