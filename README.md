@@ -7,6 +7,12 @@
 
 HTTP logging middleware especially useful to unwind concurrent operations without losing the request context
 
+<a href="https://pablosichert.github.io/concurrency-logger/">
+    <p align="center">
+        <img src="https://cloud.githubusercontent.com/assets/4450694/19832616/73cfa5cc-9e28-11e6-9b9f-da6777c2ddfb.gif" />
+    </p>
+</a>
+
 ## Install
 ```
 $ npm install concurrency-logger
