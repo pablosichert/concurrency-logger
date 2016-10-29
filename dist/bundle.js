@@ -9199,7 +9199,14 @@ var logger = (0, _src2.default)({
     reporter: {
         write: function write(line) {
             requestAnimationFrame(function () {
-                log(toHtml(line.replace(/\s/g, '&nbsp;')));
+                var replace = {
+                    ' ': '&nbsp;',
+                    '\n': ''
+                };
+
+                log(toHtml(line.replace(/ |\n/g, function (match) {
+                    return replace[match];
+                })));
             });
         }
     }

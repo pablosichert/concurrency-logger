@@ -97,7 +97,12 @@ const logger = createLogger({
     reporter: {
         write: line => {
             requestAnimationFrame(() => {
-                log(toHtml(line.replace(/\s/g, '&nbsp;')));
+                const replace = {
+                    ' ': '&nbsp;',
+                    '\n': ''
+                };
+
+                log(toHtml(line.replace(/ |\n/g, match => replace[match])));
             });
         }
     }
