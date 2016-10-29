@@ -9348,12 +9348,13 @@ $('#error').addEventListener('click', _asyncToGenerator(regeneratorRuntime.mark(
 
                     next = function () {
                         var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4() {
-                            var error;
+                            var error, stack;
                             return regeneratorRuntime.wrap(function _callee4$(_context4) {
                                 while (1) {
                                     switch (_context4.prev = _context4.next) {
                                         case 0:
                                             context.log('\nThis one will throw an error\n\n');
+
                                             _context4.next = 3;
                                             return new Promise(function (resolve) {
                                                 return setTimeout(resolve, 25 / timeFactor);
@@ -9361,9 +9362,10 @@ $('#error').addEventListener('click', _asyncToGenerator(regeneratorRuntime.mark(
 
                                         case 3:
                                             error = new Error();
-                                            throw error.stack;
+                                            stack = error.stack.match(/bundle\.js.*/)[0].replace(/\(|\)/g, '');
+                                            throw 'Error' + '\n    at Request with error' + '\n    at ' + stack;
 
-                                        case 5:
+                                        case 6:
                                         case 'end':
                                             return _context4.stop();
                                     }
@@ -9485,8 +9487,9 @@ $('#custom').addEventListener('click', _asyncToGenerator(regeneratorRuntime.mark
 
                                             error.addEventListener('click', function () {
                                                 var error = new Error();
+                                                var stack = error.stack.match(/bundle\.js.*/)[0].replace(/\(|\)/g, '');
 
-                                                reject(error.stack);
+                                                reject('Error' + '\n    at Custom request' + '\n    at ' + stack);
                                             });
 
                                             buttons.appendChild(error);

@@ -175,9 +175,20 @@ $('#error').addEventListener('click', async () => {
 
     const next = async () => {
         context.log('\nThis one will throw an error\n\n');
+
         await new Promise(resolve => setTimeout(resolve, 25 / timeFactor));
+
         const error = new Error;
-        throw error.stack;
+        const stack = (error.stack
+            .match(/bundle\.js.*/)[0]
+            .replace(/\(|\)/g, '')
+        );
+
+        throw (
+            'Error' +
+            '\n    at Request with error' +
+            '\n    at ' + stack
+        );
     };
 
     try {
@@ -244,8 +255,16 @@ $('#custom').addEventListener('click', async () => {
 
         error.addEventListener('click', () => {
             const error = new Error;
+            const stack = (error.stack
+                .match(/bundle\.js.*/)[0]
+                .replace(/\(|\)/g, '')
+            );
 
-            reject(error.stack);
+            reject(
+                'Error' +
+                '\n    at Custom request' +
+                '\n    at ' + stack
+            );
         });
 
         buttons.appendChild(error);
