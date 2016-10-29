@@ -4,18 +4,18 @@
 }
 
 body {
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-flow: column;
-        flex-flow: column;
-    -webkit-box-pack: center;
+    -webkit-flex-flow: column;
+        -ms-flex-flow: column;
+            flex-flow: column;
+    -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center;
     min-height: 100vh;
     padding: 0;
     margin: 0;
-    background: -webkit-radial-gradient(at 25%, #FFFFFF, rgba(255,255,255,.75) 50%, rgba(255,255,255,0)), -webkit-radial-gradient(at 75%, #FFFFFF, rgba(255,255,255,.75) 50%, rgba(255,255,255,0));
     background: radial-gradient(at 25%, #FFFFFF, rgba(255,255,255,.75) 50%, rgba(255,255,255,0)), radial-gradient(at 75%, #FFFFFF, rgba(255,255,255,.75) 50%, rgba(255,255,255,0));
     background-color: #CCCCCC;
     font-family: sans-serif;
@@ -28,8 +28,9 @@ body {
 
 @media (min-width: 1000px) {
     body {
-        -ms-flex-flow: row;
-            flex-flow: row;
+        -webkit-flex-flow: row;
+            -ms-flex-flow: row;
+                flex-flow: row;
     }
 }
 
@@ -57,10 +58,10 @@ button {
 
 #terminal-wrap header {
     position: relative;
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
+    -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
     height: 30px;
@@ -86,13 +87,13 @@ button {
     right: 0;
     bottom: 0;
     left: 0;
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
+    -webkit-align-items: center;
         -ms-flex-align: center;
             align-items: center;
-    -webkit-box-pack: center;
+    -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center;
     margin: 0;
@@ -129,7 +130,6 @@ button {
     color: #839496;
     cursor: pointer;
     pointer-events: none;
-    -webkit-transition: opacity 0.2s ease-out;
     transition: opacity 0.2s ease-out;
 }
 
@@ -139,14 +139,15 @@ button {
 }
 
 #toolbar {
-    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
         -ms-flex: 1 1 auto;
             flex: 1 1 auto;
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-flow: column;
-        flex-flow: column;
+    -webkit-flex-flow: column;
+        -ms-flex-flow: column;
+            flex-flow: column;
     padding: 2rem;
     background: #002B36;
     font-size: 4vw;
@@ -154,7 +155,7 @@ button {
 
 @media (min-width: 1000px) {
     #toolbar {
-        -webkit-box-flex: 0;
+        -webkit-flex: 0 1 250px;
             -ms-flex: 0 1 250px;
                 flex: 0 1 250px;
         font-size: 13px;
@@ -162,11 +163,12 @@ button {
 }
 
 #toolbar > .inner {
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-flow: column;
-        flex-flow: column;
+    -webkit-flex-flow: column;
+        -ms-flex-flow: column;
+            flex-flow: column;
     margin: auto 0;
 }
 
@@ -175,20 +177,21 @@ button {
     bottom: 0;
     right: 0;
     left: 0;
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -webkit-box-pack: center;
+    -webkit-justify-content: center;
         -ms-flex-pack: center;
             justify-content: center;
 }
 
 #requests > div {
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
-    -ms-flex-flow: column;
-        flex-flow: column;
+    -webkit-flex-flow: column;
+        -ms-flex-flow: column;
+            flex-flow: column;
     padding: 0 1rem;
 }
 
@@ -201,13 +204,13 @@ button {
 }
 
 #requests > div > div {
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
 }
 
 #requests > div > div > button {
-    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
         -ms-flex: 1 1 auto;
             flex: 1 1 auto;
 }
@@ -224,13 +227,13 @@ input {
 }
 
 .horizontal {
-    display: -webkit-box;
+    display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
 }
 
 .horizontal input {
-    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
         -ms-flex: 1 1 auto;
             flex: 1 1 auto;
     width: 4em;

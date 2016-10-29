@@ -17,7 +17,11 @@ import autoprefixer from 'autoprefixer';
     .pipe(createWriteStream(resolve(__dirname, '../dist/bundle.js')))
 );
 
-(postcss([ autoprefixer ])
+(postcss([
+    autoprefixer({
+        browsers: ['last 2 versions', 'last 4 iOS versions']
+    })
+])
     .process(readFileSync(resolve(__dirname, '../src/style.css')))
     .then(result => {
         const file = createWriteStream(resolve(__dirname, '../dist/style.css'));
