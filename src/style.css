@@ -95,6 +95,7 @@ button {
     height: calc(32 * 16px);
     width: calc(8.42px * 80);
     overflow-y: scroll;
+    overflow-x: hidden;
     white-space: nowrap;
 }
 
