@@ -9162,10 +9162,12 @@ scrollFrame = requestAnimationFrame(scroll);
 var $scroll = $('#scroll');
 
 var resumeScroll = function resumeScroll() {
-    autoScroll = true;
-    last = performance.now();
-    scrollFrame = requestAnimationFrame(scroll);
-    $scroll.className = '';
+    if (!autoScroll) {
+        autoScroll = true;
+        last = performance.now();
+        scrollFrame = requestAnimationFrame(scroll);
+        $scroll.className = '';
+    }
 };
 
 $scroll.addEventListener('click', resumeScroll);
@@ -9186,9 +9188,7 @@ $terminal.addEventListener('scroll', function (event) {
             $scroll.className = 'active';
         }
     } else if (scrollHeight - scrollTop - clientHeight < 100) {
-        if (!autoScroll) {
-            resumeScroll();
-        }
+        resumeScroll();
     }
 
     lastScrollTop = scrollTop;
@@ -9254,6 +9254,12 @@ setInterval(function () {
 
     logger(context, next);
 }, 1000);
+
+document.addEventListener('click', function (event) {
+    if (event.target.matches('button')) {
+        resumeScroll();
+    }
+});
 
 $('#redirect').addEventListener('click', function () {
     var context = {

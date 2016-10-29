@@ -60,10 +60,12 @@ scrollFrame = requestAnimationFrame(scroll);
 const $scroll = $('#scroll');
 
 const resumeScroll = () => {
-    autoScroll = true;
-    last = performance.now();
-    scrollFrame = requestAnimationFrame(scroll);
-    $scroll.className = '';
+    if (!autoScroll) {
+        autoScroll = true;
+        last = performance.now();
+        scrollFrame = requestAnimationFrame(scroll);
+        $scroll.className = '';
+    }
 };
 
 $scroll.addEventListener('click', resumeScroll);
@@ -84,9 +86,7 @@ $terminal.addEventListener('scroll', event => {
             $scroll.className = 'active';
         }
     } else if (scrollHeight - scrollTop - clientHeight < 100) {
-        if (!autoScroll) {
-            resumeScroll();
-        }
+        resumeScroll();
     }
 
     lastScrollTop = scrollTop;
@@ -130,6 +130,12 @@ setInterval(() => {
 
     logger(context, next);
 }, 1000);
+
+document.addEventListener('click', event => {
+    if (event.target.matches('button')) {
+        resumeScroll();
+    }
+});
 
 $('#redirect').addEventListener('click', () => {
     const context = {
