@@ -22,19 +22,23 @@ $ npm install concurrency-logger
 
 ## Usage
 ### With [koa](https://github.com/koajs/koa)
+#### Basic usage
 ```js
 import Koa from 'koa';
 import createLogger from 'concurrency-logger';
 
 const app = new Koa;
 
+// Logger is stateful as it contains information about concurrent requests
+// Same instance needs to be reused across requests
 const logger = createLogger(/* options */);
 
-// Basic logger
 app.use(logger);
-
-// Log something in context to a specific request to trace it back easily,
-// even when there are multiple concurrent requests
+```
+#### Log from middleware
+```js
+// Log something in context to a specific request to trace it back easily -
+// also when there are multiple concurrent requests
 app.use(async (context, next) => {
     context.log('Log!');
     context.log.info('Info!');
@@ -42,8 +46,67 @@ app.use(async (context, next) => {
 
     await next();
 });
+```
 
-// ...
+#### Attach more [context](https://github.com/koajs/koa/blob/master/docs/api/context.md#request-aliases) to the log
+```js
+const logger = createLogger({
+    req: context => (
+        context.originalUrl + '\n' +
+        context.get('User-Agent')
+    )
+});
+```
+
+#### Include localized timestamps
+```js
+const logger = createLogger({
+    timestamp: true
+});
+```
+
+#### Write log to file
+```js
+import { createWriteStream } from 'fs';
+
+// To read log use program that interprets ANSI escape codes,
+// e.g. cat or less -r
+const log = createWriteStream('logs/requests.log');
+
+const logger = createLogger({
+    reporter: log
+});
+```
+
+#### Adjust alert levels per method and response time
+```js
+const logger = createLogger({
+    getLevel: (responseTime, context) => {
+        /*
+            GET
+              0 -  99ms: 0
+            100 - 149ms: 1
+            150 - 199ms: 2
+            200 - 249ms: 3
+            250 - 299ms: 4
+            300 - 349ms: 5
+            > 350ms    : 6
+
+            POST
+              0 - 149ms: 0
+            150 - 225ms: 1
+                   ... : ...
+        */
+
+        let threshold = 50; // ms
+
+        if (['POST', 'PUT'].includes(context.method)) {
+            threshold *= 1.5;
+        }
+
+        return Math.floor(responseTime / threshold) - 1;
+    }
+});
 ```
 
 ## API
