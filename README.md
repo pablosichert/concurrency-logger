@@ -135,7 +135,7 @@ const logger = createLogger(/* options */);
     } catch (error) {
         // Errors are passed through
     }
-});
+})();
 ```
 
 ## API
