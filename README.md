@@ -21,7 +21,9 @@ $ npm install concurrency-logger
 ```
 
 ## Usage
+
 ### With [koa](https://github.com/koajs/koa)
+
 #### Basic usage
 ```js
 import Koa from 'koa';
@@ -35,6 +37,7 @@ const logger = createLogger(/* options */);
 
 app.use(logger);
 ```
+
 #### Log from middleware
 ```js
 // Log something in context to a specific request to trace it back easily -
@@ -105,6 +108,32 @@ const logger = createLogger({
         }
 
         return Math.floor(responseTime / threshold) - 1;
+    }
+});
+```
+
+### Standalone
+```js
+import createLogger from 'concurrency-logger';
+
+const logger = createLogger(/* options */);
+
+(async () => {
+    const context = {
+        method: 'GET',
+        originalUrl: '/'
+    };
+
+    const next = async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        context.status = 200;
+    };
+
+    try {
+        await logger(context, next);
+    } catch (error) {
+        // Errors are passed through
     }
 });
 ```
