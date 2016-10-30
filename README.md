@@ -10,6 +10,8 @@ HTTP logging middleware especially useful to unwind concurrent operations withou
 <a href="https://pablosichert.github.io/concurrency-logger/">
     <p align="center">
         <img src="https://cloud.githubusercontent.com/assets/4450694/19836607/c60e0ed2-9ea5-11e6-8696-556eed7ea7c9.gif" alt="HTTP logs in a terminal, visualizing server status codes, response times, debug information and errors for concurrent requests" />
+        <br />
+        Launch demo in your browser
     </p>
 </a>
 
