@@ -12,6 +12,8 @@ const expect = (unexpected()
     .use(unexpectedSinon)
 );
 
+const _process = process;
+
 Object.defineProperty(process.stdout, 'columns', {
     get: () => 80
 });
@@ -463,6 +465,58 @@ describe('logger', () => {
     });
 
     describe('width', () => {
+        it('reads from process.stdout.columns by default', async function() {
+            const createLogger = this.createLogger();
+
+            const spy = sinon.spy();
+
+            const _stdout = _process.stdout;
+
+            const stdout = Proxy.revocable(_stdout, {
+                get: (target, name) => {
+                    if (name === 'columns') {
+                        return spy();
+                    } else {
+                        return target[name];
+                    }
+                }
+            });
+
+            const process = Proxy.revocable(_process, {
+                get: (target, name) => {
+                    if (name === 'stdout') {
+                        return stdout.proxy;
+                    } else {
+                        return target[name];
+                    }
+                }
+            });
+
+            global.process = process.proxy;
+
+            try {
+                const logger = createLogger();
+
+                const context = {
+                    method: 'GET',
+                    originalUrl: '/'
+                };
+
+                const next = () => {};
+
+                await logger(context, next);
+
+                expect(spy, 'was called');
+            } catch (error) {
+                throw error;
+            } finally {
+                stdout.revoke();
+                process.revoke();
+
+                global.process = _process;
+            }
+        });
+
         it('should not break lines when set to false', async function() {
             const title = this.test.fullTitle();
             const createLogger = this.createLogger(title);

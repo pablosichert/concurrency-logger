@@ -214,7 +214,7 @@ export default function createLogger(options = {}) {
         getWidth = () => false;
         break;
     default:
-        getWidth = () => process.stdout.column;
+        getWidth = () => process.stdout.columns;
     }
 
     const slots = new Array(minSlots).fill(null);
