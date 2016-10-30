@@ -535,6 +535,31 @@ describe('logger', () => {
             expect(this.output, 'to equal', fixtures[title]);
         });
     });
+
+    describe('getLevel', () => {
+        it('has access to responseTime and context', async function() {
+            const createLogger = this.createLogger();
+            const getLevel = sinon.spy();
+
+            const logger = createLogger({
+                getLevel
+            });
+
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
+
+            const next = () => {
+                this.clock.tick(50);
+                context.status = 200;
+            };
+
+            await logger(context, next);
+
+            expect(getLevel, 'was called with', 50, context);
+        });
+    });
 });
 
 describe('colorize', () => {

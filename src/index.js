@@ -100,6 +100,7 @@ export function colorize(color = 0) {
 
 function printToConsole({
     colorizer,
+    context,
     getWidth,
     maxLocaleTimeLength,
     reporter,
@@ -142,7 +143,7 @@ function printToConsole({
             const now = new Date;
 
             const _slots = slots.map(slot =>
-                slot ? colorizer(now - slot)('│') : separator
+                slot ? colorizer(now - slot, context)('│') : separator
             );
 
             let messageWidth;
@@ -170,7 +171,7 @@ function printToConsole({
                     format ? (
                         format(char(i, lines.length))
                     ) : (
-                        colorizer(now - slots[slot])(char(i, lines.length))
+                        colorizer(now - slots[slot], context)(char(i, lines.length))
                     )
                 );
 
@@ -218,8 +219,8 @@ export default function createLogger(options = {}) {
 
     const slots = new Array(minSlots).fill(null);
 
-    const colorizer = responseTime => {
-        const level = getLevel(responseTime);
+    const colorizer = (responseTime, context) => {
+        const level = getLevel(responseTime, context);
 
         return colorize(level);
     };
@@ -251,13 +252,14 @@ export default function createLogger(options = {}) {
         slots[slot] = +start;
 
         const printer = printToConsole({
+            colorizer,
+            context,
             getWidth,
             maxLocaleTimeLength: () => maxLocaleTimeLength,
             reporter,
             slim,
-            slots,
             slot,
-            colorizer
+            slots
         });
 
         const log = printer({
@@ -343,7 +345,7 @@ export default function createLogger(options = {}) {
 
         const durationLength = $duration.length;
 
-        $duration = colorizer(duration)($duration);
+        $duration = colorizer(duration, context)($duration);
 
         if (durationLength < maxLocaleTimeLength) {
             $duration = (
