@@ -300,6 +300,34 @@ describe('logger', () => {
         expect(this.output, 'to equal', fixtures[title]);
     });
 
+    it('should log the thrown error status if avaiable', async function () {
+        const title = this.test.fullTitle();
+        const createLogger = this.createLogger(title);
+
+        const logger = createLogger();
+
+        const context = {
+            method: 'GET',
+            originalUrl: '/'
+        };
+
+        const next = () => {
+            const error = new Error('GatewayTimeout');
+            error.status = 504;
+            error.stack = 'Error\n    at stack';
+
+            throw error;
+        };
+
+        try {
+            await logger(context, next);
+        } catch (error) {
+            // Not interested in this one
+        }
+
+        expect(this.output, 'to equal', fixtures[title]);
+    });
+
     it('should expose context.log method', async function() {
         const title = this.test.fullTitle();
         const createLogger = this.createLogger(title);
