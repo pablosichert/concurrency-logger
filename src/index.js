@@ -1,5 +1,8 @@
-import util from 'util';
-import colors, { fg, reset as colorEnd } from 'ansi-256-colors';
+const util = require('util');
+const colors = require('ansi-256-colors');
+const { fg, reset: colorEnd } = colors;
+const RequestBuffer = require('./RequestBuffer');
+const Logger = require('./Logger');
 
 const {
     getRgb: rgb
@@ -59,7 +62,7 @@ function breakLines(message, messageWidth, map) {
     }
 }
 
-export function colorize(color = 0) {
+function colorize(color = 0) {
     if (typeof color === 'number') {
         if (color <= 0) {
             return character => character;
@@ -103,7 +106,7 @@ function printToConsole({
     context,
     getWidth,
     maxLocaleTimeLength,
-    reporter,
+    // reporter,
     slim,
     slot,
     slots
@@ -183,13 +186,13 @@ function printToConsole({
                     ${formatLine(line)}
                 `;
 
-                reporter.write(formattedLine + '\n');
+                // reporter.write(formattedLine + '\n');
             });
         };
     };
 }
 
-export default function createLogger(options = {}) {
+function createLogger(options = {}) {
     const {
         minSlots = 1,
         getLevel = GET_LEVEL,
@@ -233,8 +236,14 @@ export default function createLogger(options = {}) {
         maxLocaleTimeLength = 5;
     }
 
+    const requestBuffer = new RequestBuffer();
+    const logStream = new Logger();
+
+    requestBuffer.pipe(logStream).pipe(reporter);
+
     return async function logger(context, next) {
         const start = new Date;
+        const requestId = requestBuffer.add();
 
         let slot;
         for (let i = 0; i < slots.length; i++) {
@@ -256,7 +265,7 @@ export default function createLogger(options = {}) {
             context,
             getWidth,
             maxLocaleTimeLength: () => maxLocaleTimeLength,
-            reporter,
+            // reporter,
             slim,
             slot,
             slots
@@ -327,6 +336,7 @@ export default function createLogger(options = {}) {
         }
 
         const end = new Date;
+        requestBuffer.end(requestId);
         const duration = end - start;
 
         let $duration;
@@ -391,3 +401,6 @@ export default function createLogger(options = {}) {
         }
     };
 }
+
+module.exports.default = createLogger;
+module.exports.colorize = colorize;
