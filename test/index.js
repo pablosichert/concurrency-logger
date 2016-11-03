@@ -105,13 +105,23 @@ describe('createLogger', () => {
 
 describe('logger', () => {
     before(function () {
-        this.createLogger = title => opts => {
-            const logger = createLogger({
-                ...opts,
-                reporter: createReporter(this, title)
-            });
+        this.createLogger = title => {
+            let reporter;
 
-            return logger;
+            if (title) {
+                reporter = createReporter(this, title);
+            } else {
+                reporter = createWriteStream('/dev/null');
+            }
+
+            return opts => {
+                const logger = createLogger({
+                    ...opts,
+                    reporter
+                });
+
+                return logger;
+            };
         };
     });
 
@@ -148,8 +158,7 @@ describe('logger', () => {
     });
 
     it('should pass on errors', async function () {
-        const title = this.test.fullTitle();
-        const createLogger = this.createLogger(title);
+        const createLogger = this.createLogger();
 
         const logger = createLogger();
 
