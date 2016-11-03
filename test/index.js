@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, createWriteStream } from 'fs';
 import { resolve } from 'path';
+import { STATUS_CODES } from 'http';
 import { fg, reset as colorEnd } from 'ansi-256-colors';
 import { clone as unexpected } from 'unexpected';
 import sinon from 'sinon';
@@ -168,48 +169,26 @@ describe('logger', () => {
         await expect(logger(context, next), 'to be rejected with', error);
     });
 
-    describe('status codes', () => {
-        const types = {
-            '1xx (Informational)': [
-                100, 101, 102
-            ],
-            '2xx (Success)': [
-                200, 201, 202, 203, 204, 205, 206, 207, 208, 226,
-            ],
-            '3xx (Redirection)': [
-                300, 301, 302, 303, 304, 305, 306, 307, 308,
-            ],
-            '4xx (Client error)': [
-                400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 420, 421, 422, 423, 424, 425, 426, 428, 429, 431, 451, 444, 449,
-            ],
-            '5xx (Server error)': [
-                500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511
-            ]
-        };
+    it('should format status code', async function () {
+        const title = this.test.fullTitle();
+        const createLogger = this.createLogger(title);
 
-        for (const type of Object.keys(types)) {
-            it(`should format ${type}`, async function () {
-                const title = this.test.fullTitle();
-                const createLogger = this.createLogger(title);
+        const logger = createLogger();
 
-                const logger = createLogger();
+        for (const status of Object.keys(STATUS_CODES)) {
+            const context = {
+                method: 'GET',
+                originalUrl: '/'
+            };
 
-                for (const status of types[type]) {
-                    const context = {
-                        method: 'GET',
-                        originalUrl: '/'
-                    };
+            const next = () => {
+                context.status = status;
+            };
 
-                    const next = () => {
-                        context.status = status;
-                    };
-
-                    await logger(context, next);
-                }
-
-                expect(this.output, 'to equal', fixtures[title]);
-            });
+            await logger(context, next);
         }
+
+        expect(this.output, 'to equal', fixtures[title]);
     });
 
     it('should format response time', async function () {
