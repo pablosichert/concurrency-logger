@@ -196,10 +196,10 @@ demo $ npm run compile
 
 [npm-url]: https://npmjs.org/package/concurrency-logger
 [npm-image]: https://badge.fury.io/js/concurrency-logger.svg
-[travis-url]: https://travis-ci.org/PabloSichert/concurrency-logger
-[travis-image]: http://img.shields.io/travis/PabloSichert/concurrency-logger.svg
-[coveralls-url]:https://coveralls.io/r/PabloSichert/concurrency-logger
-[coveralls-image]:https://coveralls.io/repos/PabloSichert/concurrency-logger/badge.svg
+[travis-url]: https://travis-ci.org/PabloSichert/concurrency-logger?branch=master
+[travis-image]: https://travis-ci.org/PabloSichert/concurrency-logger.svg?branch=master
+[coveralls-url]:https://coveralls.io/r/PabloSichert/concurrency-logger?branch=master
+[coveralls-image]:https://coveralls.io/repos/PabloSichert/concurrency-logger/badge.svg?branch=master
 [david-dm-url]:https://david-dm.org/PabloSichert/concurrency-logger
 [david-dm-image]:https://david-dm.org/PabloSichert/concurrency-logger.svg
 [david-dm-dev-url]:https://david-dm.org/PabloSichert/concurrency-logger#info=devDependencies
