@@ -167,13 +167,15 @@ function printToConsole({
                     $meta = chars(' ', 4 + timeLength + 5);
                 }
 
-                _slots[slot] = (
-                    format ? (
-                        format(char(i, lines.length))
-                    ) : (
-                        colorizer(now - slots[slot], context)(char(i, lines.length))
-                    )
-                );
+                if (typeof slot === 'number') {
+                    _slots[slot] = (
+                        format ? (
+                            format(char(i, lines.length))
+                        ) : (
+                            colorizer(now - slots[slot], context)(char(i, lines.length))
+                        )
+                    );
+                }
 
                 const $slots = _slots.join(slim ? '' : separator);
 
@@ -233,7 +235,7 @@ export default function createLogger(options = {}) {
         maxLocaleTimeLength = 5;
     }
 
-    return async function logger(context, next) {
+    const logger = async (context, next) => {
         const start = new Date;
 
         let slot;
@@ -389,5 +391,43 @@ export default function createLogger(options = {}) {
         if (exception) {
             throw exception;
         }
+    };
+
+    const printer = printToConsole({
+        colorizer,
+        context,
+        getWidth,
+        maxLocaleTimeLength: () => maxLocaleTimeLength,
+        reporter,
+        slim,
+        slots
+    });
+
+    const log = (...args) => {
+        let $time;
+
+        if (showTimestamp) {
+            $time = (new Date).toLocaleTimeString();
+
+            if ($time.length > maxLocaleTimeLength) {
+                maxLocaleTimeLength = $time.length;
+            } else if ($time.length < maxLocaleTimeLength) {
+                $time = (
+                    chars(SPACER, maxLocaleTimeLength - $time.length)
+                ) + $time;
+            }
+        } else {
+            $time = chars(SPACER, maxLocaleTimeLength);
+        }
+
+        printer({
+            char: () => ' ',
+            meta: i => !i && `    ${$time}     `
+        })(...args);
+    };
+
+    return {
+        logger,
+        log
     };
 }
