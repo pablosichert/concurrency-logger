@@ -432,6 +432,28 @@ describe('logger', () => {
         expect(this.output, 'to equal', fixtures[title]);
     });
 
+    it('should use custom colorizer', async function () {
+        const title = this.test.fullTitle();
+        const createLogger = this.createLogger(title);
+
+        const logger = createLogger({
+            colorizer: () => string => `${fg.getRgb(5, 0, 0)}${string}${colorEnd}`
+        });
+
+        const context = {
+            method: 'GET',
+            originalUrl: '/'
+        };
+
+        const next = () => {
+            context.status = 200;
+        };
+
+        await logger(context, next);
+
+        expect(this.output, 'to equal', fixtures[title]);
+    });
+
     it('should expand when timestamp needs more space', async function() {
         const title = this.test.fullTitle();
         const createLogger = this.createLogger(title);

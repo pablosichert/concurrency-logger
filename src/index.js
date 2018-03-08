@@ -193,6 +193,11 @@ export default function createLogger(options = {}) {
     const {
         minSlots = 1,
         getLevel = GET_LEVEL,
+        colorizer = (responseTime, context) => {
+            const level = getLevel(responseTime, context);
+
+            return colorize(level);
+        },
         width,
         timestamp: showTimestamp = false,
         slim = false,
@@ -218,12 +223,6 @@ export default function createLogger(options = {}) {
     }
 
     const slots = new Array(minSlots).fill(null);
-
-    const colorizer = (responseTime, context) => {
-        const level = getLevel(responseTime, context);
-
-        return colorize(level);
-    };
 
     let maxLocaleTimeLength;
 
