@@ -359,7 +359,7 @@ export default function createLogger(options = {}) {
         let $status;
 
         if (exception) {
-            $status = colorize('fatal')('ERR');
+            $status = colorize('fatal')(exception.status || 'ERR');
         } else if (status >= 100 && status < 200) {
             $status = colorize('info')(status);
         } else if (status < 300) {
